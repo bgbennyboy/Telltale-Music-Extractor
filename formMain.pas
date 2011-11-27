@@ -115,6 +115,11 @@ type
     MenuItemOpenPuzzleAgent102: TMenuItem;
     MenuItemOpenHector102: TMenuItem;
     MenuItemOpenHector103: TMenuItem;
+    JurassicParkTheGame: TMenuItem;
+    MenuItemOpenJurassicParkEP4: TMenuItem;
+    MenuItemOpenJurassicParkEP3: TMenuItem;
+    MenuItemOpenJurassicParkEP2: TMenuItem;
+    MenuItemOpenJurassicParkEP1: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
@@ -148,7 +153,7 @@ const
   strInvalidFolder:   string = 'Invalid destination folder. Check the destination path';
   strNoMusicFound:    string = 'No .aud or music .ttarch files found! Check the source folder path!';
   strProgName:        string = 'Telltale Music Extractor';
-  strProgVersion:     string = '1.4.9.2';
+  strProgVersion:     string = '1.4.9.3';
   strProgURL:         string = 'http://quick.mixnmojo.com';
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
   strSoundTrackDir:   string = 'Soundtracks';
@@ -925,7 +930,28 @@ begin
   if SenderName = 'MenuItemOpenHector103' then
   begin
     strFolder:=GetTelltaleGamePath(Hector_BeyondReasonableDoom);
+  end
+  else
+  if SenderName = 'MenuItemOpenJurassicParkEP1' then
+  begin
+    strFolder:=GetTelltaleGamePath(JurassicPark_EP1);
+  end
+  else
+  if SenderName = 'MenuItemOpenJurassicParkEP2' then
+  begin
+    strFolder:=GetTelltaleGamePath(JurassicPark_EP2);
+  end
+  else
+  if SenderName = 'MenuItemOpenJurassicParkEP3' then
+  begin
+    strFolder:=GetTelltaleGamePath(JurassicPark_EP3);
+  end
+  else
+  if SenderName = 'MenuItemOpenJurassicParkEP4' then
+  begin
+    strFolder:=GetTelltaleGamePath(JurassicPark_EP4);
   end;
+
 
   if directoryexists(strFolder) = false then
   begin
