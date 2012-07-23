@@ -8984,6 +8984,11 @@ object frmMain: TfrmMain
         ImageIndex = 12
         OnClick = OpenPopupMenuHandler
       end
+      object MenuItemOpenWalkingDeadEP2: TMenuItem
+        Caption = 'The Walking Dead: Starved For Help'
+        ImageIndex = 12
+        OnClick = OpenPopupMenuHandler
+      end
     end
     object WallaceandGromitsGrandAdventures1: TMenuItem
       Caption = 'Wallace and Gromits Grand Adventures'

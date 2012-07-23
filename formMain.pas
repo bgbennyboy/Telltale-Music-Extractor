@@ -30,7 +30,7 @@ uses
   ExtCtrls, ComCtrls, XPMan, Menus, Dialogs,
   AdvMenus, AdvMenuStylers, AdvEdBtn, AdvDirectoryEdit, AdvEdit, HTMLabel,
   JvBaseDlg, JvBrowseFolder, JvExControls, JvSpeedButton, JCLSysInfo, JCLFileUtils,
-  PngImageList, ACS_Misc,
+  PngImageList, ACS_Misc, fmod, fmodtypes,
   uTelltaleFuncs, uTtarchBundleManager, uTelltaleTypes, uTelltaleMemStream, uSoundTrackManager;
 
 type
@@ -123,6 +123,7 @@ type
     heWalkingDead1: TMenuItem;
     MenuItemOpenWalkingDeadEP1: TMenuItem;
     MenuItemOpenLawAndOrderLegacies: TMenuItem;
+    MenuItemOpenWalkingDeadEP2: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
@@ -140,6 +141,7 @@ type
 
     function DoTtarchFiles: integer;
     function DoTtarchFilesWithSoundTrack(SoundTrack: TSoundTrackManager; BundleFileList: TStringList): integer;
+    function SaveFSBToWAVFile(SourceStream: TStream; DestFile: string): boolean;
     procedure TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
 
     procedure EnableControls(Value: boolean);
@@ -224,7 +226,6 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  //SetDesktopIconFonts(Self.Font);
   fSourceFiles:=TStringList.Create;
   dlgBrowseforfolder.RootDirectory:=fdDesktopDirectory;
   dlgBrowseforfolder.RootDirectoryPath:=GetDesktopDirectoryFolder;
@@ -440,11 +441,13 @@ var
   DestFile: TFileStream;
 begin
   Result:=0;
-  //First count how many aud files there are
+  //First count how many files there are
   MusicCount:=0;
   for I := 0 to fBundle.Count - 1 do
   begin
-    if Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.AUD' then
+    if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.AUD') or
+       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') or    //walking dead 101 has mix of aud + wav
+       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') then  //walking dead has FSB
       inc(MusicCount);
   end;
 
@@ -454,6 +457,7 @@ begin
 
   TempStream:=TTelltaleMemoryStream.Create;
   try
+    //First dump AUD files
     for I := 0 to fBundle.Count - 1 do
     begin
       if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.AUD' then
@@ -483,6 +487,40 @@ begin
 
       progressbar1.Position:=progressbar1.Position + 1;
     end;
+
+    //Then dump WAV's
+    for I := 0 to fBundle.Count - 1 do
+      begin
+        if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.WAV' then
+          continue;
+
+        DestPath:=IncludeTrailingPathDelimiter(DirEditDest.Text) + fBundle.FileName[i];
+        DestFile:=tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
+        try
+          fBundle.SaveFileToStream(i, DestFile);
+          inc(Result);
+        finally
+          DestFile.Free;
+        end;
+
+        progressbar1.Position:=progressbar1.Position + 1;
+      end;
+
+    //Then dump FSB's
+    for I := 0 to fBundle.Count - 1 do
+      begin
+        if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.FSB' then
+          continue;
+
+        TempStream.Clear;
+        fBundle.SaveFileToStream(i, TempStream);
+        TempStream.Position := 0;
+        if SaveFSBToWAVFile(TempStream, IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.wav')) = true then
+          inc(Result);
+
+        progressbar1.Position:=progressbar1.Position + 1;
+      end;
+
   finally
     TempStream.Free;
   end;
@@ -963,8 +1001,12 @@ begin
   if SenderName = 'MenuItemOpenWalkingDeadEP1' then
   begin
     strFolder:=GetTelltaleGamePath(WalkingDead_ANewDay);
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDeadEP2' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_StarvedForHelp);
   end;
-
 
   if directoryexists(strFolder) = false then
   begin
@@ -976,6 +1018,102 @@ begin
 
 end;
 
+
+function TfrmMain.SaveFSBToWAVFile(SourceStream: TStream; DestFile: string): boolean;
+var
+  OutputWav: array of ansichar;
+  SourceData: array of ansichar;
+  OutputWavName: ansistring;
+  FS: pointer;
+  Snd, SubSound: Fmod_Sound;
+  Channel: FMod_Channel;
+  FModResult: FMod_Result;
+  ExInfo: Fmod_CreateSoundExInfo;
+  rate, totalcalls, totaltime: single;
+  Duration, i: cardinal;
+  Played: boolean;
+begin
+  result := false;
+
+  //First build the array for the destination wav file
+  OutputWavname := AnsiString( DestFile) ;
+  SetLength(OutputWav, length(OutputWavname));
+  StrCopy(PAnsiChar(OutputWav), PAnsiChar(OutputWavName));
+
+  FModResult := Fmod_System_Create(fs);
+  try
+    if FModResult <> FMOD_OK then
+    begin
+      //Log(format('Fmod error on System Create %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
+      exit;
+    end;
+
+    Fmod_System_Setoutput( fs, FMOD_OUTPUTTYPE_WAVWRITER_NRT);
+    if FModResult <> FMOD_OK then
+    begin
+      //Log(format('Fmod error on Set Output %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
+      exit;
+    end;
+
+    Fmod_System_Init(fs, 32, FMOD_INIT_STREAM_FROM_UPDATE, @OutputWav[0]);
+    if FModResult <> FMOD_OK then
+    begin
+      //Log(format('Fmod error on System Init %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
+      exit;
+    end;
+
+
+    //Load the data into the array
+    Setlength(SourceData, SourceStream.Size);
+    SourceStream.Position := 0;
+    SourceStream.Read(SourceData[0], SourceStream.size);
+
+
+    ZeroMemory(@ExInfo, SizeOf(FMOD_CREATESOUNDEXINFO));
+    ExInfo.length := length(SourceData);
+    ExInfo.cbsize := SizeOf(FMOD_CREATESOUNDEXINFO);
+
+    FModResult:=Fmod_System_CreateSound(fs, @SourceData[0], FMOD_CREATESTREAM or FMOD_OPENMEMORY, @ExInfo, Snd);
+    if FModResult <> FMOD_OK then
+    begin
+      //Log(format('Fmod error on CreateSound %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
+      exit;
+    end;
+
+    FModResult:= FMOD_Sound_GetSubSound(Snd, 0, SubSound);
+    if FModResult <> FMOD_OK then
+    begin
+      //Log(format('Fmod error on Create SubSound %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
+      exit;
+    end;
+
+    Rate := 1024.0 / 44100; //48000.0;
+    Fmod_Sound_GetLength(SubSound, Duration, 1);
+    TotalCalls := (Duration / 1000) / rate;  //div by 1000 to convert to seconds
+    Played:=false;
+    TotalTime :=0;
+
+    for I := 0 to Trunc(totalcalls) - 1 do
+    begin
+      if (Played=false) and (totaltime <= 1000) then
+      begin
+        Fmod_System_Playsound(fs, Fmod_Channel_Free, SubSound, false, Channel); //play just once..in the first second..
+        Played:=true;
+      end;
+
+      Fmod_System_Update(fs);
+      TotalTime := TotalTime + (Rate * 1000);
+    end;
+
+    Result := true;
+  finally
+    fmod_sound_release(SubSound);
+    fmod_sound_release(Snd);
+    fmod_system_release(fs);
+    SetLength(SourceData, 0);
+    SetLength(OutputWav, 0);
+  end;
+end;
 
 procedure TfrmMain.MenuItemOpenFolderClick(Sender: TObject);
 begin

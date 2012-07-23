@@ -35,6 +35,7 @@ uses
 begin
   Application.Initialize;
   Application.Title := 'Telltale Music Extractor';
+
   Application.CreateForm(TfrmMain, frmMain);
   Application.Run;
 end.
