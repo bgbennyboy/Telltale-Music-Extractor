@@ -1021,9 +1021,7 @@ end;
 
 function TfrmMain.SaveFSBToWAVFile(SourceStream: TStream; DestFile: string): boolean;
 var
-  OutputWav: array of ansichar;
   SourceData: array of ansichar;
-  OutputWavName: ansistring;
   FS: pointer;
   Snd, SubSound: Fmod_Sound;
   Channel: FMod_Channel;
@@ -1034,11 +1032,6 @@ var
   Played: boolean;
 begin
   result := false;
-
-  //First build the array for the destination wav file
-  OutputWavname := AnsiString( DestFile) ;
-  SetLength(OutputWav, length(OutputWavname));
-  StrCopy(PAnsiChar(OutputWav), PAnsiChar(OutputWavName));
 
   FModResult := Fmod_System_Create(fs);
   try
@@ -1055,7 +1048,7 @@ begin
       exit;
     end;
 
-    Fmod_System_Init(fs, 32, FMOD_INIT_STREAM_FROM_UPDATE, @OutputWav[0]);
+    Fmod_System_Init(fs, 32, FMOD_INIT_STREAM_FROM_UPDATE, nil);
     if FModResult <> FMOD_OK then
     begin
       //Log(format('Fmod error on System Init %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
@@ -1107,11 +1100,43 @@ begin
 
     Result := true;
   finally
-    fmod_sound_release(SubSound);
-    fmod_sound_release(Snd);
-    fmod_system_release(fs);
+    FModResult := fmod_sound_release(SubSound);
+    if FModResult <> FMOD_OK then
+    begin
+      Result := false;
+    end;
+
+    FModResult := fmod_sound_release(Snd);
+    if FModResult <> FMOD_OK then
+    begin
+      Result := false;
+    end;
+
+    FModResult := fmod_system_close(fs);
+    if FModResult <> FMOD_OK then
+    begin
+      Result := false;
+    end;
+
+    FModResult := fmod_system_release(fs);
+    if FModResult <> FMOD_OK then
+    begin
+      Result := false;
+    end;
+
     SetLength(SourceData, 0);
-    SetLength(OutputWav, 0);
+
+    if result = true then
+    begin
+      //Letting fmod write the files with a different name leads to corruption so this is the slow workaround
+      if FileExists(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav') then
+        FileCopy(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav', DestFile);
+    end;
+
+    //Finally delete that temp file if its there
+    if FileExists(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav') then
+      SysUtils.DeleteFile(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav');
+
   end;
 end;
 
