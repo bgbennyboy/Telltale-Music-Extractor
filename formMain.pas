@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2011 Bgbennyboy
+  Copyright (c) 2006 - 2012 Bgbennyboy
   Http://quick.mixnmojo.com
 ******************************************************
 }
@@ -30,8 +30,9 @@ uses
   ExtCtrls, ComCtrls, XPMan, Menus, Dialogs,
   AdvMenus, AdvMenuStylers, AdvEdBtn, AdvDirectoryEdit, AdvEdit, HTMLabel,
   JvBaseDlg, JvBrowseFolder, JvExControls, JvSpeedButton, JCLSysInfo, JCLFileUtils,
-  PngImageList, ACS_Misc, fmod, fmodtypes,
-  uTelltaleFuncs, uTtarchBundleManager, uTelltaleTypes, uTelltaleMemStream, uSoundTrackManager;
+  PngImageList, OggVorbisAndOpusTagLibrary,
+  uTelltaleFuncs, uTtarchBundleManager, uTelltaleTypes, uTelltaleMemStream, uSoundTrackManager,
+  uMPEGHeaderCheck;
 
 type
   TMusicType = (
@@ -93,7 +94,6 @@ type
     MenuItemOpenMonkeyEP4: TMenuItem;
     MenuItemOpenMonkeyEP5: TMenuItem;
     MenuItemOpenCSIDeadlyIntent: TMenuItem;
-    TagEditor1: TTagEditor;
     SamAndMaxSeason31: TMenuItem;
     MenuItemOpenSamAndMax305: TMenuItem;
     MenuItemOpenSamAndMax304: TMenuItem;
@@ -124,6 +124,9 @@ type
     MenuItemOpenWalkingDeadEP1: TMenuItem;
     MenuItemOpenLawAndOrderLegacies: TMenuItem;
     MenuItemOpenWalkingDeadEP2: TMenuItem;
+    MenuItemOpenWalkingDeadEP3: TMenuItem;
+    MenuItemOpenWalkingDeadEP4: TMenuItem;
+    MenuItemOpenWalkingDeadEP5: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
@@ -141,7 +144,7 @@ type
 
     function DoTtarchFiles: integer;
     function DoTtarchFilesWithSoundTrack(SoundTrack: TSoundTrackManager; BundleFileList: TStringList): integer;
-    function SaveFSBToWAVFile(SourceStream: TStream; DestFile: string): boolean;
+    function SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
     procedure TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
 
     procedure EnableControls(Value: boolean);
@@ -158,7 +161,7 @@ const
   strInvalidFolder:   string = 'Invalid destination folder. Check the destination path';
   strNoMusicFound:    string = 'No .aud or music .ttarch files found! Check the source folder path!';
   strProgName:        string = 'Telltale Music Extractor';
-  strProgVersion:     string = '1.4.9.4';
+  strProgVersion:     string = '1.4.9.5';
   strProgURL:         string = 'http://quick.mixnmojo.com';
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
   strSoundTrackDir:   string = 'Soundtracks';
@@ -515,7 +518,7 @@ begin
         TempStream.Clear;
         fBundle.SaveFileToStream(i, TempStream);
         TempStream.Position := 0;
-        if SaveFSBToWAVFile(TempStream, IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.wav')) = true then
+        if SaveFSBToMP3(TempStream, IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.mp3')) = true then
           inc(Result);
 
         progressbar1.Position:=progressbar1.Position + 1;
@@ -680,20 +683,22 @@ end;
 procedure TfrmMain.TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
 var
   SourceCover: string;
+  OpusTag: TOpusTag;
 begin
-  TagEditor1.FileName := Ansistring(FileName);
-
-  if TagEditor1.Valid = false then exit;
-
-  TagEditor1.Title    := Title;
-  TagEditor1.Album    := Album;
-  TagEditor1.Artist   := Artist;
-  TagEditor1.Genre    := Genre;
-  TagEditor1.Track    := TrackNo;
-  TagEditor1.Year     := Year;
-  TagEditor1.Comment  := strCommentTag + strProgVersion + ' ' + strProgURL;
-
-  TagEditor1.Save;
+  OpusTag := TOpusTag.Create;
+  try
+    OpusTag.SetTextFrameText('TITLE', Title);
+    OpusTag.SetTextFrameText('ALBUM', Album);
+    OpusTag.SetTextFrameText('ARTIST', Artist);
+    OpusTag.SetTextFrameText('GENRE', Genre);
+    OpusTag.SetTextFrameText('TRACK', TrackNo);
+    OpusTag.SetTextFrameText('Year', Year);
+    OpusTag.SetTextFrameText('Album Artist', 'Telltale Games');
+    OpusTag.SetTextFrameText('COMMENT', strCommentTag + strProgVersion + ' ' + strProgURL);
+    OpusTag.SaveToFile(FileName);
+  finally
+    OpusTag.Free;
+  end;
 
   if CoverArt <> '' then
   begin
@@ -1006,6 +1011,21 @@ begin
   if SenderName = 'MenuItemOpenWalkingDeadEP2' then
   begin
     strFolder:=GetTelltaleGamePath(WalkingDead_StarvedForHelp);
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDeadEP3' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_LongRoadAhead);
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDeadEP4' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_AroundEveryCorner);
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDeadEP5' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_NoTimeLeft);
   end;
 
   if directoryexists(strFolder) = false then
@@ -1019,124 +1039,61 @@ begin
 end;
 
 
-function TfrmMain.SaveFSBToWAVFile(SourceStream: TStream; DestFile: string): boolean;
+function TfrmMain.SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
 var
-  SourceData: array of ansichar;
-  FS: pointer;
-  Snd, SubSound: Fmod_Sound;
-  Channel: FMod_Channel;
-  FModResult: FMod_Result;
-  ExInfo: Fmod_CreateSoundExInfo;
-  rate, totalcalls, totaltime: single;
-  Duration, i: cardinal;
-  Played: boolean;
+  TempInt: Integer;
+  buffer: TBuffer;
+  tmpMpegHeader: TMpegHeader;
+  DestStream: TFileStream;
 begin
   result := false;
 
-  FModResult := Fmod_System_Create(fs);
+
+  SourceStream.Position := 0;
+  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
   try
-    if FModResult <> FMOD_OK then
+    DestStream.Position := 0;
+
+    if SourceStream.ReadDWord <> 876761926 then //'FSB4'
     begin
-      //Log(format('Fmod error on System Create %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
-      exit;
+      ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
+      Exit;
     end;
 
-    Fmod_System_Setoutput( fs, FMOD_OUTPUTTYPE_WAVWRITER_NRT);
-    if FModResult <> FMOD_OK then
+    TempInt := SourceStream.ReadDWord;
+    if TempInt <> 1 then //Number of samples
     begin
-      //Log(format('Fmod error on Set Output %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
-      exit;
+      ShowMessage( 'Not just 1 sample in FSB! ' + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
+      Exit;
     end;
 
-    Fmod_System_Init(fs, 32, FMOD_INIT_STREAM_FROM_UPDATE, nil);
-    if FModResult <> FMOD_OK then
+    TempInt := SourceStream.ReadDWord; //Size of sample header
+    SourceStream.Seek(36 + TempInt, soFromCurrent); //Puts it at start of sample data
+
+
+    //Now parse the MP3
+    while SourceStream.Position < SourceStream.Size do
     begin
-      //Log(format('Fmod error on System Init %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
-      exit;
-    end;
+      setlength(buffer, 4);
+      TempInt := SourceStream.Read(buffer[0], 4);  //Bytes read
+      if TempInt < 4 then exit;
 
-
-    //Load the data into the array
-    Setlength(SourceData, SourceStream.Size);
-    SourceStream.Position := 0;
-    SourceStream.Read(SourceData[0], SourceStream.size);
-
-
-    ZeroMemory(@ExInfo, SizeOf(FMOD_CREATESOUNDEXINFO));
-    ExInfo.length := length(SourceData);
-    ExInfo.cbsize := SizeOf(FMOD_CREATESOUNDEXINFO);
-
-    FModResult:=Fmod_System_CreateSound(fs, @SourceData[0], FMOD_CREATESTREAM or FMOD_OPENMEMORY, @ExInfo, Snd);
-    if FModResult <> FMOD_OK then
-    begin
-      //Log(format('Fmod error on CreateSound %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
-      exit;
-    end;
-
-    FModResult:= FMOD_Sound_GetSubSound(Snd, 0, SubSound);
-    if FModResult <> FMOD_OK then
-    begin
-      //Log(format('Fmod error on Create SubSound %d (%s)', [longint(FModResult), GetEnumName(TypeInfo(FMOD_RESULT), integer(FModResult))]));
-      exit;
-    end;
-
-    Rate := 1024.0 / 44100; //48000.0;
-    Fmod_Sound_GetLength(SubSound, Duration, 1);
-    TotalCalls := (Duration / 1000) / rate;  //div by 1000 to convert to seconds
-    Played:=false;
-    TotalTime :=0;
-
-    for I := 0 to Trunc(totalcalls) - 1 do
-    begin
-      if (Played=false) and (totaltime <= 1000) then
+      tmpMpegHeader := GetValidatedHeader(buffer, 0);
+      if tmpMpegHeader.valid then
       begin
-        Fmod_System_Playsound(fs, Fmod_Channel_Free, SubSound, false, Channel); //play just once..in the first second..
-        Played:=true;
-      end;
-
-      Fmod_System_Update(fs);
-      TotalTime := TotalTime + (Rate * 1000);
+        SourceStream.Seek( -4, soFromCurrent);
+        if tmpMpegHeader.framelength + SourceStream.Position > SourceStream.Size then
+          exit //Bad frame at the end, dont copy it
+        else
+          DestStream.CopyFrom(SourceStream, tmpMpegHeader.framelength);
+      end
+      else
+        SourceStream.Position := SourceStream.Position -3;
     end;
 
+   finally
     Result := true;
-  finally
-    FModResult := fmod_sound_release(SubSound);
-    if FModResult <> FMOD_OK then
-    begin
-      Result := false;
-    end;
-
-    FModResult := fmod_sound_release(Snd);
-    if FModResult <> FMOD_OK then
-    begin
-      Result := false;
-    end;
-
-    FModResult := fmod_system_close(fs);
-    if FModResult <> FMOD_OK then
-    begin
-      Result := false;
-    end;
-
-    FModResult := fmod_system_release(fs);
-    if FModResult <> FMOD_OK then
-    begin
-      Result := false;
-    end;
-
-    SetLength(SourceData, 0);
-
-    if result = true then
-    begin
-      //Letting fmod write the files with a different name leads to corruption so this is the slow workaround
-      if FileExists(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav') then
-        FileCopy(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav', DestFile);
-    end;
-
-    //Finally delete that temp file if its there
-    if FileExists(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav') then
-      SysUtils.DeleteFile(ExtractFilePath(Application.ExeName) + 'fmodoutput.wav');
-
+    DestStream.Free;
   end;
 end;
 

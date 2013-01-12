@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2011 Bgbennyboy
+  Copyright (c) 2006 - 2012 Bgbennyboy
   Http://quick.mixnmojo.com
 ******************************************************
 }

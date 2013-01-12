@@ -21,22 +21,24 @@
 	<span class="style7">
 		<span class="style10">Telltale Music Extractor <br>
 			By Bgbennyboy<br>
-			Version 1.4.9.4<br>
+			Version 1.4.9.5<br>
 			<a href="http://quick.mixnmojo.com">Http://quick.mixnmojo.com</a></span><br><br>
 		</span>
 
-	<p class="style7"><strong><em>New in this version (1.4.9.4):</em></strong></p>
+	<p class="style7"><strong><em>New in this version (1.4.9.5):</em></strong></p>
+	<ul>
+		<li class="style7">Added support for The Walking Dead episodes 3, 4 and 5.</li><br>
+		<li class="style7">Rewrote support for the FSB audio used in The Walking Dead. The audio is now dumped as it is stored ingame, as MP3s. This also stops the crashes that sometimes occured when saving music from The Walking Dead. </li><br>
+		<li class="style7">Changed the OGG tagging engine. This means that I am able to remove the libtag.dll and libtag_c.dll files - these were sometimes incorrectly detected as a virus by bad antivirus programs.</li><br>	
+	</ul>
+	
+	<p class="style7"><strong><em>New in the previous version (1.4.9.4):</em></strong></p>
 	<ul>
 		<li class="style7">Added support for Law & Order Legacies and The Walking Dead Episodes 1 + 2.</li><br>
 	</ul>
-	
-	<p class="style7"><strong><em>New in the previous version (1.4.9.3):</em></strong></p>
-	<ul>
-		<li class="style7">Added support for Jurassic Park episodes 1-4.</li><br>
-	</ul>
 
 	<p class="style7"><strong><em>What is Telltale Music Extractor?:</em></strong><br>
-		A program that enables you to rip the music from all games released by Telltale Games. To date (July 2012) that includes:
+		A program that enables you to rip the music from all games released by Telltale Games. To date (January 2013) that includes:
 	</p>
 	
 	<ul class="style7">
@@ -111,6 +113,9 @@
 		<ul>	
 		<li>Episode 1: A New Day</li>
 		<li>Episode 2: Starved For Help</li>
+		<li>Episode 3: Long Road Ahead</li>
+		<li>Episode 4: Around Every Corner</li>
+		<li>Episode 5: No Time Left</li>	
 		</ul>	
 		<li>Telltale Texas Hold&rsquo;em</li>
 		<li>Wallace and Gromit&rsquo;s Grand Adventure</li>
@@ -143,7 +148,7 @@
 	</p>
 	
 	<p class="style7"><em><strong>Creating soundtrack files:</strong></em><br>
-		Soundtrack support is activated by creating an .ini file and putting it in the 'Soundtracks' folder. At the moment only OGG files are supported for soundtracks, although support for FSB and WAV files could be added if requested. The format is fairly straighforward and you can get an idea from looking at the included ini's but the following is a brief guide to the structure of a soundtrack ini file.<br><br>
+		Soundtrack support is activated by creating an .ini file and putting it in the 'Soundtracks' folder. At the moment only OGG files are supported for soundtracks, although support for MP3 and WAV files could be added if requested. The format is fairly straighforward and you can get an idea from looking at the included ini's but the following is a brief guide to the structure of a soundtrack ini file.<br><br>
 		
 		Each ini must have an [Info Header] section that will look something like this:<br><br>
 		&nbsp;&nbsp;[Info Header]<br>
@@ -196,16 +201,19 @@
 	
 	<p class="style7"><em><strong>Limitations:</strong></em><br> 
 		The tool only rips music. If you want to rip speech then download Telltale Speech Extractor from my <a href="http://quick.mixnmojo.com">website.</a><br>
-		Soundtrack files - at the moment only OGG files are supported for soundtracks, although support for FSB and WAV files could be added if requested.
+		Soundtrack files - at the moment only OGG files are supported for soundtracks, although support for MP3 and WAV files could be added if requested.
 	</p>
 	
 	<p class="style7"><em><strong>Source:</strong></em><br> 
 		Available from my <a href="https://github.com/bgbennyboy/Telltale-Music-Extractor">Github.</a>
 	</p>
 	
-	<p class="style7"><em><strong>Thanks:</strong></em><br> 
-		Many thanks to <a href="http://aluigi.org/index.htm">Luigi Auriemma</a> for his work on the V7 ttarch format and his updated blowfish code.</a><br>
-		Thanks to <a href=http://soundtracks.mixnmojo.com>Laserschwert</a> for the soundtrack dumping idea and for providing the soundtrack support and album art for Tales of Monkey Island and Wallace and Gromit.
+	<p class="style7"><em><strong>Thanks:</strong></em><br>
+		To <a href="http://www.3delite.hu">3delite</a> for the Ogg Vorbis and Opus Tag Library.<br>
+		To <a href="http://aezay.site11.com">Anders Jakobsen</a> for his help with the FSB files.<br>
+		To <a href="http://www.gausi.de">Daniel Gaussmann</a> for his MP3FileUtils unit.<br>
+		To <a href="http://soundtracks.mixnmojo.com">Laserschwert</a> for the soundtrack dumping idea and for providing the soundtrack support and album art for Tales of Monkey Island and Wallace and Gromit.<br>
+		To <a href="http://aluigi.org/index.htm">Luigi Auriemma</a> for his work on the V7 ttarch format and his updated blowfish code.<br>
 	</p>
 	
 	<p class="style7"><em><strong>Support:</strong></em>
@@ -216,6 +224,6 @@
 	</p>
 	
 	<br>
-	<p class="style7 style12">bgbennyboy 23/07/12</p>
+	<p class="style7 style12">bgbennyboy 04/01/13</p>
 </body>
 </html>

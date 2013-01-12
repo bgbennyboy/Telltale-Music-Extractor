@@ -8989,6 +8989,21 @@ object frmMain: TfrmMain
         ImageIndex = 12
         OnClick = OpenPopupMenuHandler
       end
+      object MenuItemOpenWalkingDeadEP3: TMenuItem
+        Caption = 'The Walking Dead: Long Road Ahead'
+        ImageIndex = 12
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenWalkingDeadEP4: TMenuItem
+        Caption = 'The Walking Dead: Around Every Corner'
+        ImageIndex = 12
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenWalkingDeadEP5: TMenuItem
+        Caption = 'The Walking Dead: No Time Left'
+        ImageIndex = 12
+        OnClick = OpenPopupMenuHandler
+      end
     end
     object WallaceandGromitsGrandAdventures1: TMenuItem
       Caption = 'Wallace and Gromits Grand Adventures'
@@ -9014,9 +9029,5 @@ object frmMain: TfrmMain
         OnClick = OpenPopupMenuHandler
       end
     end
-  end
-  object TagEditor1: TTagEditor
-    Left = 256
-    Top = 80
   end
 end
