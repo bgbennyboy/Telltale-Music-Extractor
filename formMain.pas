@@ -1,8 +1,8 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2012 Bgbennyboy
-  Http://quick.mixnmojo.com
+  Copyright (c) 2006 - 2013 Bennyboy
+  Http://quickandeasysoftware.net
 ******************************************************
 }
 {
@@ -127,6 +127,8 @@ type
     MenuItemOpenWalkingDeadEP3: TMenuItem;
     MenuItemOpenWalkingDeadEP4: TMenuItem;
     MenuItemOpenWalkingDeadEP5: TMenuItem;
+    MenuPoker: TMenuItem;
+    MenuItemOpenPoker2: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
@@ -161,7 +163,7 @@ const
   strInvalidFolder:   string = 'Invalid destination folder. Check the destination path';
   strNoMusicFound:    string = 'No .aud or music .ttarch files found! Check the source folder path!';
   strProgName:        string = 'Telltale Music Extractor';
-  strProgVersion:     string = '1.4.9.5';
+  strProgVersion:     string = '1.4.9.6';
   strProgURL:         string = 'http://quick.mixnmojo.com';
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
   strSoundTrackDir:   string = 'Soundtracks';
@@ -936,6 +938,11 @@ begin
   if SenderName = 'MenuItemOpenPokerInventory' then
   begin
     strFolder:=GetTelltaleGamePath(PokerNight_Inventory);
+  end
+  else
+  if SenderName = 'MenuItemOpenPoker2' then
+  begin
+    strFolder:=GetTelltaleGamePath(PokerNight_2);
   end
   else
   if SenderName = 'MenuItemOpenBTTF1' then

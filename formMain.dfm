@@ -8802,10 +8802,19 @@ object frmMain: TfrmMain
       ImageIndex = 5
       OnClick = OpenPopupMenuHandler
     end
-    object MenuItemOpenPokerInventory: TMenuItem
-      Caption = 'Poker Night At The Inventory'
+    object MenuPoker: TMenuItem
+      Caption = 'Poker Night'
       ImageIndex = 4
-      OnClick = OpenPopupMenuHandler
+      object MenuItemOpenPokerInventory: TMenuItem
+        Caption = 'Poker Night At The Inventory'
+        ImageIndex = 4
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenPoker2: TMenuItem
+        Caption = 'Poker Night 2'
+        ImageIndex = 4
+        OnClick = OpenPopupMenuHandler
+      end
     end
     object PuzzleAgent1: TMenuItem
       Caption = 'Puzzle Agent'
