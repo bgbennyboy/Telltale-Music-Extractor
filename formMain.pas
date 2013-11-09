@@ -129,6 +129,8 @@ type
     MenuItemOpenWalkingDeadEP5: TMenuItem;
     MenuPoker: TMenuItem;
     MenuItemOpenPoker2: TMenuItem;
+    TheWolfAmongUs1: TMenuItem;
+    MenuItemOpenWolfAmongUs1: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
@@ -163,8 +165,8 @@ const
   strInvalidFolder:   string = 'Invalid destination folder. Check the destination path';
   strNoMusicFound:    string = 'No .aud or music .ttarch files found! Check the source folder path!';
   strProgName:        string = 'Telltale Music Extractor';
-  strProgVersion:     string = '1.4.9.6';
-  strProgURL:         string = 'http://quick.mixnmojo.com';
+  strProgVersion:     string = '1.4.9.7';
+  strProgURL:         string = 'http://quickandeasysoftware.net/';
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
   strSoundTrackDir:   string = 'Soundtracks';
   strCommentTag:      string = 'Created with Telltale Music Extractor ';
@@ -342,6 +344,9 @@ begin
     //First find ttarch archives in the folder
     FindFilesInDirByExt(Dir, '.ttarch', TtarchFiles);
 
+    //First find ttarch2 archives in the folder
+    FindFilesInDirByExt(Dir, '.ttarch2', TtarchFiles);
+
     if TtarchFiles.Count = 0 then exit;
 
     for I := 0 to TtarchFiles.Count - 1 do
@@ -351,6 +356,19 @@ begin
       begin
         fTtarchFileName:=TtarchFiles.Strings[i];
         break;
+      end
+      else
+      //Wolf among us has separate boot ttarch2 bundles - so ...
+      if Uppercase( ExtractFileExt( TtarchFiles.Strings[i] )) = '.TTARCH2' then
+      begin  //dont do this for old games yet - too lazy to check if any have separate boot ttarches
+        if Pos('_MS', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
+          if Pos('_BOOT', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
+            continue
+          else
+          begin
+            fTtarchFileName:=TtarchFiles.Strings[i];
+            break;
+          end;
       end
       else //used in Wallace and Grommit onwards
       if Pos('_MS', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
@@ -493,38 +511,31 @@ begin
       progressbar1.Position:=progressbar1.Position + 1;
     end;
 
-    //Then dump WAV's
+    //Wolf among us has FSB files with WAV extension so for lazyness  - just do this:
+    //First try and dump FSB's + then assume its WAV if it fails
     for I := 0 to fBundle.Count - 1 do
+    begin
+      if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') then
+      else
+        continue;
+
+      TempStream.Clear;
+      fBundle.SaveFileToStream(i, TempStream);
+      TempStream.Position := 0;
+      DestPath := IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.mp3');
+      if SaveFSBToMP3(TempStream, DestPath) = true then
+        inc(Result)
+      else //Assume its a normal WAV
+      if Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV' then
       begin
-        if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.WAV' then
-          continue;
-
-        DestPath:=IncludeTrailingPathDelimiter(DirEditDest.Text) + fBundle.FileName[i];
-        DestFile:=tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
-        try
-          fBundle.SaveFileToStream(i, DestFile);
-          inc(Result);
-        finally
-          DestFile.Free;
-        end;
-
-        progressbar1.Position:=progressbar1.Position + 1;
-      end;
-
-    //Then dump FSB's
-    for I := 0 to fBundle.Count - 1 do
-      begin
-        if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.FSB' then
-          continue;
-
-        TempStream.Clear;
-        fBundle.SaveFileToStream(i, TempStream);
         TempStream.Position := 0;
-        if SaveFSBToMP3(TempStream, IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.mp3')) = true then
-          inc(Result);
-
-        progressbar1.Position:=progressbar1.Position + 1;
+        DestPath := IncludeTrailingPathDelimiter(DirEditDest.Text) + fBundle.FileName[i];
+        TempStream.SaveToFile(DestPath);
+        inc(Result);
       end;
+
+      progressbar1.Position:=progressbar1.Position + 1;
+    end;
 
   finally
     TempStream.Free;
@@ -1033,6 +1044,11 @@ begin
   if SenderName = 'MenuItemOpenWalkingDeadEP5' then
   begin
     strFolder:=GetTelltaleGamePath(WalkingDead_NoTimeLeft);
+  end
+  else
+  if SenderName = 'MenuItemOpenWolfAmongUs1' then
+  begin
+    strFolder:=GetTelltaleGamePath(WolfAmongUs_Faith);
   end;
 
   if directoryexists(strFolder) = false then
@@ -1055,24 +1071,24 @@ var
 begin
   result := false;
 
-
   SourceStream.Position := 0;
+
+  if SourceStream.ReadDWord <> 876761926 then //'FSB4'
+  begin
+    //ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
+    Exit;
+  end;
+
+  TempInt := SourceStream.ReadDWord;
+  if TempInt <> 1 then //Number of samples
+  begin
+    ShowMessage( 'Not just 1 sample in FSB! ' + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
+    Exit;
+  end;
+
   DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
   try
     DestStream.Position := 0;
-
-    if SourceStream.ReadDWord <> 876761926 then //'FSB4'
-    begin
-      ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
-      Exit;
-    end;
-
-    TempInt := SourceStream.ReadDWord;
-    if TempInt <> 1 then //Number of samples
-    begin
-      ShowMessage( 'Not just 1 sample in FSB! ' + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
-      Exit;
-    end;
 
     TempInt := SourceStream.ReadDWord; //Size of sample header
     SourceStream.Seek(36 + TempInt, soFromCurrent); //Puts it at start of sample data
