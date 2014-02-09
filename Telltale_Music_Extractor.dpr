@@ -28,7 +28,9 @@ program Telltale_Music_Extractor;
 uses
   Forms,
   formMain in 'formMain.pas' {frmMain},
-  uSoundtrackManager in 'uSoundtrackManager.pas';
+  uSoundtrackManager in 'uSoundtrackManager.pas',
+  uTelltaleMusicDumper in 'uTelltaleMusicDumper.pas',
+  uTelltaleMusicExtractorConst in 'uTelltaleMusicExtractorConst.pas';
 
 {$R *.res}
   

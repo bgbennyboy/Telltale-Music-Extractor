@@ -11,7 +11,6 @@ object frmMain: TfrmMain
   Position = poScreenCenter
   ScreenSnap = True
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object HTMLabel1: THTMLabel
@@ -137,7 +136,7 @@ object frmMain: TfrmMain
   end
   object dlgBrowseForFolder: TJvBrowseForFolderDialog
     RootDirectory = fdDesktopDirectory
-    Title = 'Choose folder with .aud files'
+    Title = 'Choose a folder with .aud .ttarch  or .ttarch2 files'
     Left = 96
     Top = 80
   end
@@ -10657,30 +10656,68 @@ object frmMain: TfrmMain
     object heWalkingDead1: TMenuItem
       Caption = 'The Walking Dead'
       ImageIndex = 12
-      object MenuItemOpenWalkingDeadEP1: TMenuItem
-        Caption = 'The Walking Dead: A New Day'
+      object SeasonOne1: TMenuItem
+        Caption = 'Season One'
         ImageIndex = 12
-        OnClick = OpenPopupMenuHandler
+        object MenuItemOpenWalkingDeadEP1: TMenuItem
+          Caption = 'The Walking Dead: A New Day'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDeadEP2: TMenuItem
+          Caption = 'The Walking Dead: Starved For Help'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDeadEP3: TMenuItem
+          Caption = 'The Walking Dead: Long Road Ahead'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDeadEP4: TMenuItem
+          Caption = 'The Walking Dead: Around Every Corner'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDeadEP5: TMenuItem
+          Caption = 'The Walking Dead: No Time Left'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDeadEP6: TMenuItem
+          Caption = 'The Walking Dead: 400 Days (DLC)'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
       end
-      object MenuItemOpenWalkingDeadEP2: TMenuItem
-        Caption = 'The Walking Dead: Starved For Help'
+      object SeasonTwo1: TMenuItem
+        Caption = 'Season Two'
         ImageIndex = 12
-        OnClick = OpenPopupMenuHandler
-      end
-      object MenuItemOpenWalkingDeadEP3: TMenuItem
-        Caption = 'The Walking Dead: Long Road Ahead'
-        ImageIndex = 12
-        OnClick = OpenPopupMenuHandler
-      end
-      object MenuItemOpenWalkingDeadEP4: TMenuItem
-        Caption = 'The Walking Dead: Around Every Corner'
-        ImageIndex = 12
-        OnClick = OpenPopupMenuHandler
-      end
-      object MenuItemOpenWalkingDeadEP5: TMenuItem
-        Caption = 'The Walking Dead: No Time Left'
-        ImageIndex = 12
-        OnClick = OpenPopupMenuHandler
+        object MenuItemOpenWalkingDead_S2_E1: TMenuItem
+          Caption = 'The Walking Dead: All That Remains'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDead_S2_E2: TMenuItem
+          Caption = 'The Walking Dead: A House Divided'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDead_S2_E3: TMenuItem
+          Caption = 'The Walking Dead: In Harm'#39's Way'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDead_S2_E4: TMenuItem
+          Caption = 'The Walking Dead: Amid The Ruins'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
+        object MenuItemOpenWalkingDead_S2_E5: TMenuItem
+          Caption = 'The Walking Dead: No Going Back'
+          ImageIndex = 12
+          OnClick = OpenPopupMenuHandler
+        end
       end
     end
     object TheWolfAmongUs1: TMenuItem
@@ -10688,6 +10725,26 @@ object frmMain: TfrmMain
       ImageIndex = 13
       object MenuItemOpenWolfAmongUs1: TMenuItem
         Caption = 'Episode 1: Faith'
+        ImageIndex = 13
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenWolfAmongUs2: TMenuItem
+        Caption = 'Episode 2: Smoke And Mirrors'
+        ImageIndex = 13
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenWolfAmongUs3: TMenuItem
+        Caption = 'Episode 3: A Crooked Mile'
+        ImageIndex = 13
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenWolfAmongUs4: TMenuItem
+        Caption = 'Episode 4: In Sheep'#39's Clothing'
+        ImageIndex = 13
+        OnClick = OpenPopupMenuHandler
+      end
+      object MenuItemOpenWolfAmongUs5: TMenuItem
+        Caption = 'Episode 5: Cry Wolf'
         ImageIndex = 13
         OnClick = OpenPopupMenuHandler
       end

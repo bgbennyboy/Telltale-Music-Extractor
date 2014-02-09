@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2013 Bennyboy
+  Copyright (c) 2006 - 2014 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
@@ -26,21 +26,15 @@ unit formMain;
 interface
 
 uses
-  Windows, Messages, SysUtils, Forms, Classes, Controls, StdCtrls, ImgList,
-  ExtCtrls, ComCtrls, XPMan, Menus, Dialogs,
-  AdvMenus, AdvMenuStylers, AdvEdBtn, AdvDirectoryEdit, AdvEdit, HTMLabel,
-  JvBaseDlg, JvBrowseFolder, JvExControls, JvSpeedButton, JCLSysInfo, JCLFileUtils,
-  PngImageList, OggVorbisAndOpusTagLibrary,
-  uTelltaleFuncs, uTtarchBundleManager, uTelltaleTypes, uTelltaleMemStream, uSoundTrackManager,
-  uMPEGHeaderCheck;
+  Windows, Menus, Forms, ImgList, Controls, Dialogs, XPMan, ExtCtrls,
+  ComCtrls, StdCtrls, Classes, SysUtils,
+  AdvMenus, AdvMenuStylers, AdvEdBtn, AdvDirectoryEdit,  HTMLabel, AdvEdit,
+  JvBaseDlg, JvBrowseFolder, JvExControls, JvSpeedButton, JCLSysInfo,
+  PngImageList,
+  uTelltaleFuncs, uTelltaleMusicExtractorConst, uTelltaleMusicDumper,
+  uSoundTrackManager;
 
 type
-  TMusicType = (
-    mtOGG,
-    mtTTARCH,
-    mtNONE
-  );
-
   TfrmMain = class(TForm)
     DirEditDest: TAdvDirectoryEdit;
     btnGo: TButton;
@@ -131,28 +125,28 @@ type
     MenuItemOpenPoker2: TMenuItem;
     TheWolfAmongUs1: TMenuItem;
     MenuItemOpenWolfAmongUs1: TMenuItem;
-    procedure FormDestroy(Sender: TObject);
+    SeasonOne1: TMenuItem;
+    SeasonTwo1: TMenuItem;
+    MenuItemOpenWalkingDeadEP6: TMenuItem;
+    MenuItemOpenWalkingDead_S2_E1: TMenuItem;
+    MenuItemOpenWalkingDead_S2_E2: TMenuItem;
+    MenuItemOpenWalkingDead_S2_E3: TMenuItem;
+    MenuItemOpenWalkingDead_S2_E4: TMenuItem;
+    MenuItemOpenWalkingDead_S2_E5: TMenuItem;
+    MenuItemOpenWolfAmongUs2: TMenuItem;
+    MenuItemOpenWolfAmongUs3: TMenuItem;
+    MenuItemOpenWolfAmongUs4: TMenuItem;
+    MenuItemOpenWolfAmongUs5: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnOpenClick(Sender: TObject);
     procedure MenuItemOpenFolderClick(Sender: TObject);
   private
-    fBundle: TTtarchBundleManager;
-    fTtarchFileName: string;
-    fSourceFiles: TStringList;
-    function FindMusicType(Dir: String): TMusicType;
-    procedure FindFilesInDirByExt(Path, FileExt: string; FileList: TStrings);
-    function CopyFiles: integer;
-    function CopyFilesFromTtarch: integer;
-
-    function DoTtarchFiles: integer;
-    function DoTtarchFilesWithSoundTrack(SoundTrack: TSoundTrackManager; BundleFileList: TStringList): integer;
-    function SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
-    procedure TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
-
+    fChosenGame: TTelltaleGame;
+    fMusicDumper: TTelltaleMusicDumper;
     procedure EnableControls(Value: boolean);
-    procedure FindMusicTtarchBundles(Dir: string);
+    procedure OnProgress(ProgressMax: integer; ProgressPos: integer);
   public
     { Public declarations }
   end;
@@ -160,48 +154,10 @@ type
 var
   frmMain: TfrmMain;
 
-const
-  strGameNotFound:    string = 'Couldnt find the game.' + #13 + #13 + 'Try clicking ''Open Folder'' and browse for the game manually.';
-  strInvalidFolder:   string = 'Invalid destination folder. Check the destination path';
-  strNoMusicFound:    string = 'No .aud or music .ttarch files found! Check the source folder path!';
-  strProgName:        string = 'Telltale Music Extractor';
-  strProgVersion:     string = '1.4.9.7';
-  strProgURL:         string = 'http://quickandeasysoftware.net/';
-  strTtarchError:     string = 'Error while parsing the Ttarch bundle';
-  strSoundTrackDir:   string = 'Soundtracks';
-  strCommentTag:      string = 'Created with Telltale Music Extractor ';
-  strDumpSoundTrack:  string = 'Do you want to dump this game as a soundtrack?' + #13#13 + 'See the readme for more information about this.';
-
 implementation
 
 {$R *.dfm}
 
-//Find files with a specific extension and add them to a string list
-procedure TfrmMain.FindFilesInDirByExt(Path, FileExt: string; FileList: TStrings);
-var
-  SR: TSearchRec;
-begin
-  if length(FileExt) > 1 then
-    if FileExt[1] <> '.' then
-      FileExt:='.' + FileExt;
-
-  if FindFirst(Path + '*.*', faAnyFile, SR) = 0 then
-  begin
-    repeat
-      begin
-        if sr.Attr and faDirectory = faDirectory then
-        else
-        if sr.Attr and faSysFile = faSysFile then
-        else
-        begin
-          if extractfileext(sr.Name)=FileExt then
-            filelist.Add(sr.Name);
-        end;
-      end;
-    until FindNext(SR) <> 0;
-    FindClose(SR);
-  end;
-end;
 
 procedure TfrmMain.EnableControls(Value: boolean);
 begin
@@ -210,225 +166,56 @@ begin
   btnGo.Enabled:=Value;
 end;
 
-function TfrmMain.FindMusicType(Dir: String): TMusicType;
-begin
-  result:=mtNONE;
-
-  //First see if there's .aud ogg files there
-  FindFilesInDirByExt( IncludeTrailingPathDelimiter(EditPath.Text) , '.aud', fSourceFiles);
-  if fSourceFiles.Count > 0 then
-  begin
-    result:=mtOGG;
-    exit;
-  end;
-
-  //Else see if there's music in a ttarch file in the dir
-  FindMusicTtarchBundles( IncludeTrailingPathDelimiter(EditPath.Text) );
-  if fTtarchFilename <> '' then
-  begin
-    result:=mtTTARCH;
-    exit;
-  end;
-end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-  fSourceFiles:=TStringList.Create;
   dlgBrowseforfolder.RootDirectory:=fdDesktopDirectory;
   dlgBrowseforfolder.RootDirectoryPath:=GetDesktopDirectoryFolder;
   dirEditDest.Text:=GetDesktopDirectoryFolder;
-  //dirEditDest.Enabled:=false;
-  //dirEditDest.Enabled:=true;
   DirEditDest.parentfont:=true;
   frmMain.Caption:=strProgName + ' ' + strProgVersion;
 end;
 
-procedure TfrmMain.FormDestroy(Sender: TObject);
-begin
-  fSourceFiles.Free;
-end;
-
 procedure TfrmMain.btnGoClick(Sender: TObject);
 var
-  MusicType: TMusicType;
-  int_CopyCount: integer;
+  CopyCount: integer;
+  AllFiles: TStringList;
+  SoundTrack: TSoundTrackManager;
 begin
+  CopyCount:=0;
+
   if DirectoryExists(DirEditDest.Text)=false then
   begin
     ShowMessage(strInvalidFolder);
     exit;
   end;
 
-  fSourceFiles.clear;
-  int_CopyCount:=0;
-  
-  //Find the music files
-  MusicType:=FindMusicType(EditPath.Text);
-
-  if MusicType=mtNONE then
-  begin
-    showmessage(strNoMusicFound);
-    exit;
-  end;
-
-  if MusicType=mtTTARCH then
-    int_CopyCount:=CopyFilesFromTtarch
-  else
-  if MusicType=mtOGG then
-    int_CopyCount:=CopyFiles;
-
-   if int_CopyCount = 0 then
-    ShowMessage('No files created! An error occured')
-   else
-    ShowMessage('All done! ' + inttostr(int_CopyCount) + ' files created.');
-end;
-
-function TfrmMain.CopyFiles: integer;
-var
-  DestPath: string;
-  str_Header: ansistring;
-  i, int_StartPos: integer;
-  SourceFile, DestFile: TFileStream;
-begin
-  Result:=0;
-  ProgressBar1.Max:=fSourceFiles.Count;
-  EnableControls(false);
-
-  for i:=0 to fSourceFiles.Count -1 do
-  begin
-    DestPath:=IncludeTrailingPathDelimiter( DirEditDest.Text ) + pathextractfilenamenoext(fSourceFiles.Strings[i]) + '.ogg';
-
-    SourceFile:=tfilestream.Create(IncludeTrailingPathDelimiter( EditPath.text ) + fSourceFiles.Strings[i], fmopenread);
-    try
-      DestFile:=tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
-      try
-        Setlength(str_Header, 4);
-        SourceFile.Read(str_Header[1], 4);
-
-        if str_header = 'ERTM' then int_StartPos:=93
-        else
-          int_StartPos:=126;
-
-        SourceFile.Seek(int_StartPos, sofrombeginning);
-        DestFile.CopyFrom(SourceFile, SourceFile.Size - int_StartPos);
-        inc(Result);
-      finally
-        DestFile.Free;
-      end;
-    finally
-      SourceFile.Free;
-    end;
-
-    progressbar1.Position:=i;
-  end;
-
-  EnableControls(true);
-  Progressbar1.Position:=0;
-end;
-
-
-
-
-{*********************************Ttarch stuff*********************************}
-
-procedure TfrmMain.FindMusicTtarchBundles(Dir: string);
-var
-  TtarchFiles: TStringList;
-  i: integer;
-begin
-  fTtarchFileName:='';
-  Dir:=IncludeTrailingPathDelimiter(Dir);
-
-  TtarchFiles:=Tstringlist.Create;
+  fMusicDumper := TTelltaleMusicDumper.Create(EditPath.Text, DirEditDest.Text, fChosenGame);
   try
-    //First find ttarch archives in the folder
-    FindFilesInDirByExt(Dir, '.ttarch', TtarchFiles);
-
-    //First find ttarch2 archives in the folder
-    FindFilesInDirByExt(Dir, '.ttarch2', TtarchFiles);
-
-    if TtarchFiles.Count = 0 then exit;
-
-    for I := 0 to TtarchFiles.Count - 1 do
-    begin
-      //Check if any file is a music ttarch from the filename
-      if Pos('MUSIC', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
-      begin
-        fTtarchFileName:=TtarchFiles.Strings[i];
-        break;
-      end
-      else
-      //Wolf among us has separate boot ttarch2 bundles - so ...
-      if Uppercase( ExtractFileExt( TtarchFiles.Strings[i] )) = '.TTARCH2' then
-      begin  //dont do this for old games yet - too lazy to check if any have separate boot ttarches
-        if Pos('_MS', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
-          if Pos('_BOOT', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
-            continue
-          else
-          begin
-            fTtarchFileName:=TtarchFiles.Strings[i];
-            break;
-          end;
-      end
-      else //used in Wallace and Grommit onwards
-      if Pos('_MS', AnsiUpperCase(TtarchFiles.Strings[i])) <> 0 then
-      begin
-        fTtarchFileName:=TtarchFiles.Strings[i];
-        break;
-      end
-    end;
-
-    //If no music ttarch found then...
-    if fTtarchFileName = '' then exit;
-
-  finally
-    TtarchFiles.Free;
-  end;
-end;
-
-function TfrmMain.CopyFilesFromTtarch: integer;
-var
-  SoundTrack: TSoundTrackManager;
-  AllFiles: TStringList;
-  i: integer;
-
-begin
-  Result:=0;
-  try
-    fBundle:=TTtarchBundleManager.Create(IncludeTrailingPathDelimiter(EditPath.text) + fTtarchFileName);
     try
       EnableControls(false);
-      fBundle.ParseFiles;
-
+      fMusicDumper.OnProgress := OnProgress;
 
       //Build a list of all the files in fBundle so the Soundtrack Manager can scan them
       AllFiles := TStringList.Create;
       try
-        for I := 0 to fBundle.Count - 1 do
-        begin //Add them without the file extension
-          AllFiles.Add( ChangeFileExt(fBundle.FileName[i], '') );
-        end;
 
         try
+          fMusicDumper.GetListOfFilesInBundleWithoutExt(AllFiles);
           //Create the soundtrack manager so it can see if any valid ini files exist
           SoundTrack := TSoundTrackManager.Create(ExtractFilePath(Application.ExeName) + strSoundTrackDir, AllFiles);
           try
-            if MessageDlg(strDumpSoundtrack,
-                          mtConfirmation,
-                          mbYesNo,
-                          0)
-            = mrYes then
-              Result := DoTtarchFilesWithSoundTrack(SoundTrack, AllFiles)
+            if MessageDlg(strDumpSoundtrack, mtConfirmation, mbYesNo, 0) = mrYes then
+              CopyCount := fMusicDumper.SaveFiles(Soundtrack)
             else
-              Result :=DoTtarchFiles;
+              CopyCount := fMusicDumper.SaveFiles;
 
           finally
             SoundTrack.Free;
           end;
         except on E: EInvalidIniFile do
           begin
-            //if SoundTrack <> nil then SoundTrack.Free;
-            Result :=DoTtarchFiles;
+            CopyCount := fMusicDumper.SaveFiles;
           end;
         end;
 
@@ -436,300 +223,41 @@ begin
         AllFiles.Free;
       end;
 
-
-
     finally
-      fBundle.Free;
+      fMusicDumper.Free;
       EnableControls(true);
       Progressbar1.Position:=0;
     end;
-  except on E: EInvalidFile do
-  begin
-    fBundle.Free;
-    EnableControls(true);
-    Progressbar1.Position:=0;
-    ShowMessage(strTtarchError + ' ' +  fTtarchFileName);
-  end;
-  end;
-end;
-
-
-
-
-function TfrmMain.DoTtarchFiles: integer;
-var
-  i, MusicCount: integer;
-  TempStream: TTelltaleMemoryStream;
-  DestPath: string;
-  DestFile: TFileStream;
-begin
-  Result:=0;
-  //First count how many files there are
-  MusicCount:=0;
-  for I := 0 to fBundle.Count - 1 do
-  begin
-    if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.AUD') or
-       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') or    //walking dead 101 has mix of aud + wav
-       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') then  //walking dead has FSB
-      inc(MusicCount);
-  end;
-
-  ProgressBar1.Max:=MusicCount;
-  ProgressBar1.Position:=0;
-  if MusicCount = 0 then exit;
-
-  TempStream:=TTelltaleMemoryStream.Create;
-  try
-    //First dump AUD files
-    for I := 0 to fBundle.Count - 1 do
+  except on E: EMusicDumpError do
     begin
-      if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.AUD' then
-        continue;
-
-      DestPath:=IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.ogg');
-      DestFile:=tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
-      try
-        TempStream.Clear;
-        fBundle.SaveFileToStream(i, TempStream);
-        if TempStream.Size <=52 then continue;
-
-        TempStream.Position:=52; //Newer aud's have ogg at offset 52 or 56
-        if TempStream.ReadString(4) = 'OggS' then
-          TempStream.Position:=52
-        else
-        if TempStream.ReadString(4) = 'OggS' then
-          TempStream.Position:=56
-        else
-          Continue;
-
-        DestFile.CopyFrom(TempStream, TempStream.Size - TempStream.Position);
-        inc(Result);
-      finally
-        DestFile.Free;
-      end;
-
-      progressbar1.Position:=progressbar1.Position + 1;
+      ShowMessage(E.Message);
+      EnableControls(true);
+      Progressbar1.Position:=0;
     end;
-
-    //Wolf among us has FSB files with WAV extension so for lazyness  - just do this:
-    //First try and dump FSB's + then assume its WAV if it fails
-    for I := 0 to fBundle.Count - 1 do
-    begin
-      if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') then
-      else
-        continue;
-
-      TempStream.Clear;
-      fBundle.SaveFileToStream(i, TempStream);
-      TempStream.Position := 0;
-      DestPath := IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(fBundle.FileName[i], '.mp3');
-      if SaveFSBToMP3(TempStream, DestPath) = true then
-        inc(Result)
-      else //Assume its a normal WAV
-      if Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV' then
-      begin
-        TempStream.Position := 0;
-        DestPath := IncludeTrailingPathDelimiter(DirEditDest.Text) + fBundle.FileName[i];
-        TempStream.SaveToFile(DestPath);
-        inc(Result);
-      end;
-
-      progressbar1.Position:=progressbar1.Position + 1;
-    end;
-
-  finally
-    TempStream.Free;
   end;
+
+
+
+  if CopyCount = 0 then
+    ShowMessage('No files created! An error occured')
+  else
+    ShowMessage('All done! ' + inttostr(CopyCount) + ' files created.');
 end;
-
-function TfrmMain.DoTtarchFilesWithSoundTrack(SoundTrack: TSoundTrackManager; BundleFileList: TStringList): integer;
-var
-  i, j, BundleFileIndex, MultipleFileIndex, MusicCount, MultipleFileCount: integer;
-  TempStream: TTelltaleMemoryStream;
-  DestPath, NewName: string;
-  DestFile: TFileStream;
-  CombinationFiles: TStringList;
-  SearchResult: boolean;
-begin
-  Result:=0;
-
-  //First count how many files there are
-  MusicCount := SoundTrack.Count;
-
-  ProgressBar1.Max:=MusicCount;
-  ProgressBar1.Position:=0;
-  if MusicCount = 0 then exit;
-
-  TempStream:=TTelltaleMemoryStream.Create;
-  try
-    for I := 0 to SoundTrack.Count - 1 do
-    begin
-      //First see if the soundtrack file exists in the bundle
-      BundleFileIndex := BundleFileList.IndexOf(SoundTrack.OriginalFileNames[i]);
-      if BundleFileIndex = -1 then
-        continue;
-
-      NewName := '';
-      NewName := SoundTrack.NewName[BundleFileList[BundleFileIndex]];
-      if NewName = '' then
-        continue;
-
-
-
-
-      MultipleFileCount := SoundTrack.CombinationFileCount[BundleFileList[BundleFileIndex]];
-      if  MultipleFileCount > 0 then  //Have to handle multiple files differently
-      begin
-        CombinationFiles := TStringList.Create;
-        try
-          SearchResult := Soundtrack.CombinationFiles[CombinationFiles, MultipleFileCount, BundleFileList[BundleFileIndex]];
-          if SearchResult = false then continue;
-
-          //Dump the first file
-          DestPath:=IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(NewName, '.ogg');
-          DestFile:=tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
-          try
-            TempStream.Clear;
-            fBundle.SaveFileToStream(BundleFileIndex, TempStream);
-            if TempStream.Size <=52 then continue;
-
-            TempStream.Position:=52; //Newer aud's have ogg at offset 52 or 56
-            if TempStream.ReadString(4) = 'OggS' then
-              TempStream.Position:=52
-            else
-            if TempStream.ReadString(4) = 'OggS' then
-              TempStream.Position:=56
-            else
-              Continue;
-
-            DestFile.CopyFrom(TempStream, TempStream.Size - TempStream.Position);
-            inc(Result);
-
-            //Now copy the other files to the end of this one
-              for j := 0 to MultipleFileCount - 1 do
-              begin
-                TempStream.Clear;
-
-                //Match the next file up
-                MultipleFileIndex := BundleFileList.IndexOf(CombinationFiles[j]);
-
-                fBundle.SaveFileToStream(MultipleFileIndex, TempStream);
-                if TempStream.Size <=52 then continue;
-
-                TempStream.Position:=52; //Newer aud's have ogg at offset 52 or 56
-                if TempStream.ReadString(4) = 'OggS' then
-                  TempStream.Position:=52
-                else
-                if TempStream.ReadString(4) = 'OggS' then
-                  TempStream.Position:=56
-                else
-                  Continue;
-
-                DestFile.CopyFrom(TempStream, TempStream.Size - TempStream.Position);
-            end;
-
-          finally
-            DestFile.Free;
-          end;
-
-          progressbar1.Position:=progressbar1.Position + 1;
-
-        finally
-          CombinationFiles.Free;
-        end;
-
-        //Tag the file
-        TagMusic(DestPath,
-                  SoundTrack.Title[BundleFileList[BundleFileIndex]],
-                  SoundTrack.Album,
-                  SoundTrack.Artist,
-                  SoundTrack.Genre,
-                  SoundTrack.TrackNo[BundleFileList[BundleFileIndex]],
-                  SoundTrack.Year,
-                  SoundTrack.CoverArt);
-
-        continue;
-      end;
-
-
-
-
-      DestPath:=IncludeTrailingPathDelimiter(DirEditDest.Text) + ChangeFileExt(NewName, '.ogg');
-      DestFile:=tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
-      try
-        TempStream.Clear;
-        fBundle.SaveFileToStream(BundleFileIndex, TempStream);
-        if TempStream.Size <=52 then continue;
-
-        TempStream.Position:=52; //Newer aud's have ogg at offset 52 or 56
-        if TempStream.ReadString(4) = 'OggS' then
-          TempStream.Position:=52
-        else
-        if TempStream.ReadString(4) = 'OggS' then
-          TempStream.Position:=56
-        else
-          Continue;
-
-        DestFile.CopyFrom(TempStream, TempStream.Size - TempStream.Position);
-        inc(Result);
-      finally
-        DestFile.Free;
-      end;
-
-      progressbar1.Position:=progressbar1.Position + 1;
-
-      //Tag the file
-      TagMusic(DestPath,
-                SoundTrack.Title[BundleFileList[BundleFileIndex]],
-                SoundTrack.Album,
-                SoundTrack.Artist,
-                SoundTrack.Genre,
-                SoundTrack.TrackNo[BundleFileList[BundleFileIndex]],
-                SoundTrack.Year,
-                SoundTrack.CoverArt);
-    end;
-  finally
-    TempStream.Free;
-  end;
-end;
-
-procedure TfrmMain.TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
-var
-  SourceCover: string;
-  OpusTag: TOpusTag;
-begin
-  OpusTag := TOpusTag.Create;
-  try
-    OpusTag.SetTextFrameText('TITLE', Title);
-    OpusTag.SetTextFrameText('ALBUM', Album);
-    OpusTag.SetTextFrameText('ARTIST', Artist);
-    OpusTag.SetTextFrameText('GENRE', Genre);
-    OpusTag.SetTextFrameText('TRACK', TrackNo);
-    OpusTag.SetTextFrameText('Year', Year);
-    OpusTag.SetTextFrameText('Album Artist', 'Telltale Games');
-    OpusTag.SetTextFrameText('COMMENT', strCommentTag + strProgVersion + ' ' + strProgURL);
-    OpusTag.SaveToFile(FileName);
-  finally
-    OpusTag.Free;
-  end;
-
-  if CoverArt <> '' then
-  begin
-    SourceCover := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName) + strSoundTrackDir) + Coverart;
-    if FileExists(SourceCover) then
-      FileCopy( SourceCover, ExtractFilePath(FileName) + Coverart, false);
-  end;
-end;
-
-
 
 
 {*****************************Popup Menu Handlers*****************************}
+procedure TfrmMain.OnProgress(ProgressMax, ProgressPos: integer);
+begin
+  Progressbar1.Max := ProgressMax;
+  Progressbar1.Position := ProgressPos;
+end;
+
 procedure TfrmMain.OpenPopupMenuHandler(Sender: TObject);
 var
   SenderName, strFolder: string;
 begin
   SenderName := tmenuitem(sender).Name;
+  fChosenGame := UnknownGame; //Only need to know the game for latest games
 
   if SenderName = 'MenuItemOpenFolder' then
     strFolder:=''
@@ -760,12 +288,7 @@ begin
 
     dlgBrowseForFolder.Directory := strFolder;
 
-    ShowMessage('CSI Deadly Intent has the music for each of its 5 parts stored in separate folders. ' +
-                'You''ll need to dump the music from each part manually.' + #13#13 +
-                'To do this click "Open Folder", scroll down to the "Pack" folder, select one of the CSI5 folders and click the "Go" button.'
-                + #13#13 +
-                'For example, select the CSI501 folder to dump the music from the first part.');
-
+    ShowMessage(strCSIFatalConspiracy);
   end
   else
   if SenderName = 'MenuItemOpenCultureShock' then
@@ -1046,9 +569,69 @@ begin
     strFolder:=GetTelltaleGamePath(WalkingDead_NoTimeLeft);
   end
   else
+  if SenderName = 'MenuItemOpenWalkingDeadEP6' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_400Days);
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDead_S2_E1' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_S2_AllThatRemains);
+    fChosenGame := WalkingDead_S2_AllThatRemains;
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDead_S2_E2' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_S2_AHouseDivided);
+    fChosenGame := WalkingDead_S2_AHouseDivided;
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDead_S2_E3' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_S2_InHarmsWay);
+    fChosenGame := WalkingDead_S2_InHarmsWay;
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDead_S2_E4' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_S2_AmidTheRuins);
+    fChosenGame := WalkingDead_S2_AmidTheRuins;
+  end
+  else
+  if SenderName = 'MenuItemOpenWalkingDead_S2_E5' then
+  begin
+    strFolder:=GetTelltaleGamePath(WalkingDead_S2_NoGoingBack);
+    fChosenGame := WalkingDead_S2_NoGoingBack;
+  end
+  else
   if SenderName = 'MenuItemOpenWolfAmongUs1' then
   begin
     strFolder:=GetTelltaleGamePath(WolfAmongUs_Faith);
+    fChosenGame := WolfAmongUs_Faith;
+  end
+  else
+  if SenderName = 'MenuItemOpenWolfAmongUs2' then
+  begin
+    strFolder:=GetTelltaleGamePath(WolfAmongUs_SmokeAndMirrors);
+    fChosenGame := WolfAmongUs_SmokeAndMirrors;
+  end
+  else
+  if SenderName = 'MenuItemOpenWolfAmongUs3' then
+  begin
+    strFolder:=GetTelltaleGamePath(WolfAmongUs_ACrookedMile);
+    fChosenGame := WolfAmongUs_ACrookedMile;
+  end
+  else
+  if SenderName = 'MenuItemOpenWolfAmongUs4' then
+  begin
+    strFolder:=GetTelltaleGamePath(WolfAmongUs_InSheepsClothing);
+    fChosenGame := WolfAmongUs_InSheepsClothing;
+  end
+  else
+  if SenderName = 'MenuItemOpenWolfAmongUs5' then
+  begin
+    strFolder:=GetTelltaleGamePath(WolfAmongUs_CryWolf);
+    fChosenGame := WolfAmongUs_CryWolf;
   end;
 
   if directoryexists(strFolder) = false then
@@ -1061,64 +644,6 @@ begin
 
 end;
 
-
-function TfrmMain.SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
-var
-  TempInt: Integer;
-  buffer: TBuffer;
-  tmpMpegHeader: TMpegHeader;
-  DestStream: TFileStream;
-begin
-  result := false;
-
-  SourceStream.Position := 0;
-
-  if SourceStream.ReadDWord <> 876761926 then //'FSB4'
-  begin
-    //ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
-    Exit;
-  end;
-
-  TempInt := SourceStream.ReadDWord;
-  if TempInt <> 1 then //Number of samples
-  begin
-    ShowMessage( 'Not just 1 sample in FSB! ' + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
-    Exit;
-  end;
-
-  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
-  try
-    DestStream.Position := 0;
-
-    TempInt := SourceStream.ReadDWord; //Size of sample header
-    SourceStream.Seek(36 + TempInt, soFromCurrent); //Puts it at start of sample data
-
-
-    //Now parse the MP3
-    while SourceStream.Position < SourceStream.Size do
-    begin
-      setlength(buffer, 4);
-      TempInt := SourceStream.Read(buffer[0], 4);  //Bytes read
-      if TempInt < 4 then exit;
-
-      tmpMpegHeader := GetValidatedHeader(buffer, 0);
-      if tmpMpegHeader.valid then
-      begin
-        SourceStream.Seek( -4, soFromCurrent);
-        if tmpMpegHeader.framelength + SourceStream.Position > SourceStream.Size then
-          exit //Bad frame at the end, dont copy it
-        else
-          DestStream.CopyFrom(SourceStream, tmpMpegHeader.framelength);
-      end
-      else
-        SourceStream.Position := SourceStream.Position -3;
-    end;
-
-   finally
-    Result := true;
-    DestStream.Free;
-  end;
-end;
 
 procedure TfrmMain.MenuItemOpenFolderClick(Sender: TObject);
 begin
