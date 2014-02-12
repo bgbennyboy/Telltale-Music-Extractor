@@ -212,11 +212,11 @@ const
   WolfEP3_MusicBundle = 'Fables_pc_Fables103_ms.ttarch2';
   WolfEP4_MusicBundle = 'Fables_pc_Fables104_ms.ttarch2';
   WolfEP5_MusicBundle = 'Fables_pc_Fables105_ms.ttarch2';
-  WalkingDeadS2_EP1_Bundle = 'WalkingDead_pc_Menu_ms.ttarch2';
-  WalkingDeadS2_EP2_Bundle = 'WalkingDead_pc_WalkingDead201_ms.ttarch2';
-  WalkingDeadS2_EP3_Bundle = 'WalkingDead_pc_WalkingDead301_ms.ttarch2';
-  WalkingDeadS2_EP4_Bundle = 'WalkingDead_pc_WalkingDead401_ms.ttarch2';
-  WalkingDeadS2_EP5_Bundle = 'WalkingDead_pc_WalkingDead501_ms.ttarch2';
+  WalkingDeadS2_EP1_Bundle = 'WalkingDead_pc_WalkingDead201_ms.ttarch2';
+  WalkingDeadS2_EP2_Bundle = 'WalkingDead_pc_WalkingDead202_ms.ttarch2';
+  WalkingDeadS2_EP3_Bundle = 'WalkingDead_pc_WalkingDead203_ms.ttarch2';
+  WalkingDeadS2_EP4_Bundle = 'WalkingDead_pc_WalkingDead204_ms.ttarch2';
+  WalkingDeadS2_EP5_Bundle = 'WalkingDead_pc_WalkingDead205_ms.ttarch2';
 var
   BundleList: TStringList;
   i: integer;
