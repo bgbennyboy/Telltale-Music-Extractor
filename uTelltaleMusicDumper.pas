@@ -217,9 +217,10 @@ const
   WalkingDeadS2_EP3_Bundle = 'WalkingDead_pc_WalkingDead203_ms.ttarch2';
   WalkingDeadS2_EP4_Bundle = 'WalkingDead_pc_WalkingDead204_ms.ttarch2';
   WalkingDeadS2_EP5_Bundle = 'WalkingDead_pc_WalkingDead205_ms.ttarch2';
+  //HACK - if add new game - also add it to the SpecificBundleNames list at the bottom
 var
-  BundleList: TStringList;
-  i: integer;
+  BundleList, SpecificBundleNames: TStringList;
+  i, j: integer;
   BundleFileName: string;
 begin
 {
@@ -282,6 +283,47 @@ begin
         result := BundleList.Strings[i];
         break;
       end
+    end;
+
+    {
+    Edge case - they've used 'open folder' to manually choose a game. They've
+    chosen a folder with one of the new .ttarch2 games in it - so we dont know
+    what specific episode they actually want from that folder.
+    Hack for now - just choose the first recognised bundle in that folder
+    THIS IS AN AWFUL HACK - FIX THIS
+    Having to remember to add new constants to the stringlist below is particularly bad
+    }
+    if result = '' then
+    begin
+      SpecificBundleNames := TstringList.Create;
+      try
+        SpecificBundleNames.Add(WolfEP1_MusicBundle);
+        SpecificBundleNames.Add(WolfEP2_MusicBundle);
+        SpecificBundleNames.Add(WolfEP3_MusicBundle);
+        SpecificBundleNames.Add(WolfEP4_MusicBundle);
+        SpecificBundleNames.Add(WolfEP5_MusicBundle);
+        SpecificBundleNames.Add(WalkingDeadS2_EP1_Bundle);
+        SpecificBundleNames.Add(WalkingDeadS2_EP2_Bundle);
+        SpecificBundleNames.Add(WalkingDeadS2_EP3_Bundle);
+        SpecificBundleNames.Add(WalkingDeadS2_EP4_Bundle);
+        SpecificBundleNames.Add(WalkingDeadS2_EP5_Bundle);
+
+        for j := 0 to SpecificBundleNames.Count - 1 do
+        begin
+          for I := 0 to BundleList.Count - 1 do
+          begin
+            if Uppercase( ExtractFileExt( BundleList.Strings[i] )) <> '.TTARCH2' then continue;
+
+            if UpperCase(BundleList.Strings[i]) = UpperCase(SpecificBundleNames[j]) then
+            begin
+              result := BundleList.Strings[i];
+              exit;
+            end;
+          end;
+        end;
+      finally
+        SpecificBundleNames.Free;
+      end;
     end;
 
   finally
