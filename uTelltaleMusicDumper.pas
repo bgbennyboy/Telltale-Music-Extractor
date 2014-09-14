@@ -290,7 +290,7 @@ begin
     chosen a folder with one of the new .ttarch2 games in it - so we dont know
     what specific episode they actually want from that folder.
     Hack for now - just choose the first recognised bundle in that folder
-    THIS IS AN AWFUL HACK - FIX THIS
+    TODO - THIS IS AN AWFUL HACK - FIX THIS
     Having to remember to add new constants to the stringlist below is particularly bad
     }
     if result = '' then

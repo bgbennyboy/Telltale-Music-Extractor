@@ -26,28 +26,20 @@ unit formMain;
 interface
 
 uses
-  Windows, Menus, Forms, ImgList, Controls, Dialogs, XPMan, ExtCtrls,
-  ComCtrls, StdCtrls, Classes, SysUtils,
-  AdvMenus, AdvMenuStylers, AdvEdBtn, AdvDirectoryEdit,  HTMLabel, AdvEdit,
-  JvBaseDlg, JvBrowseFolder, JvExControls, JvSpeedButton, JCLSysInfo,
-  PngImageList,
+  Windows, Menus, Forms, ImgList, Controls, Dialogs, ExtCtrls,
+  ComCtrls, StdCtrls, Classes, SysUtils, ShellApi,
+
+  JvBaseDlg, JvBrowseFolder, JCLSysInfo,
+
   uTelltaleFuncs, uTelltaleMusicExtractorConst, uTelltaleMusicDumper,
   uSoundTrackManager;
 
 type
   TfrmMain = class(TForm)
-    DirEditDest: TAdvDirectoryEdit;
-    btnGo: TButton;
     ProgressBar1: TProgressBar;
-    XPManifest1: TXPManifest;
-    HTMLabel1: THTMLabel;
-    HTMLabel2: THTMLabel;
-    btnOpen: TJvSpeedButton;
-    EditPath: TLabeledEdit;
+    EditSourcePath: TLabeledEdit;
     dlgBrowseForFolder: TJvBrowseForFolderDialog;
-    PngImageList1: TPngImageList;
-    AdvMenuOfficeStyler1: TAdvMenuOfficeStyler;
-    AdvPopupMenuOpen: TAdvPopupMenu;
+    PopupMenuOpen: TPopupMenu;
     MenuItemOpenFolder: TMenuItem;
     N2: TMenuItem;
     Bone1: TMenuItem;
@@ -137,16 +129,29 @@ type
     MenuItemOpenWolfAmongUs3: TMenuItem;
     MenuItemOpenWolfAmongUs4: TMenuItem;
     MenuItemOpenWolfAmongUs5: TMenuItem;
+    ImageListSmall: TImageList;
+    FileOpenDialog1: TFileOpenDialog;
+    btnChooseSource: TButton;
+    btnChooseDest: TButton;
+    btnGo: TButton;
+    ImageListLarge: TImageList;
+    EditDestPath: TLabeledEdit;
+    lblSupportTelltaleLink: TLinkLabel;
+    lblByAuthorLink: TLinkLabel;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
-    procedure btnGoClick(Sender: TObject);
-    procedure btnOpenClick(Sender: TObject);
     procedure MenuItemOpenFolderClick(Sender: TObject);
+    procedure btnGoClick(Sender: TObject);
+    procedure btnChooseSourceClick(Sender: TObject);
+    procedure btnChooseDestClick(Sender: TObject);
+    procedure lblSupportTelltaleLinkLinkClick(Sender: TObject;
+      const Link: string; LinkType: TSysLinkType);
   private
     fChosenGame: TTelltaleGame;
     fMusicDumper: TTelltaleMusicDumper;
     procedure EnableControls(Value: boolean);
     procedure OnProgress(ProgressMax: integer; ProgressPos: integer);
+    procedure OpenFolder;
   public
     { Public declarations }
   end;
@@ -161,89 +166,34 @@ implementation
 
 procedure TfrmMain.EnableControls(Value: boolean);
 begin
-  EditPath.Enabled:=Value;
-  DirEditDest.Enabled:=Value;
-  btnGo.Enabled:=Value;
+  btnChooseSource.Enabled := Value;
+  btnChooseDest.Enabled := Value;
+  btnGo.Enabled := Value;
+  EditSourcePath.Enabled := Value;
+  EditDestPath.Enabled := Value;
 end;
 
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
+  //Windows XP linklabel fixes
+  if Win32MajorVersion < 6 then
+  begin
+    //XP doesnt support right alignment of link label and breaks bottom border when autosize on
+    //Probably better to do this with panels and things but...its only for xp
+    lblByAuthorLink.AutoSize := false;
+    lblSupportTelltaleLink.AutoSize := false;
+    lblSupportTelltaleLink.Alignment := taLeftJustify;
+    lblSupportTelltaleLink.Left := 238;
+  end;
+
   dlgBrowseforfolder.RootDirectory:=fdDesktopDirectory;
   dlgBrowseforfolder.RootDirectoryPath:=GetDesktopDirectoryFolder;
-  dirEditDest.Text:=GetDesktopDirectoryFolder;
-  DirEditDest.parentfont:=true;
+  EditDestPath.Text:=GetDesktopDirectoryFolder;
   frmMain.Caption:=strProgName + ' ' + strProgVersion;
+  lblSupportTelltaleLink.Caption := strSupportTelltaleLink;
+  lblByAuthorLink.Caption := strAuthorLink
 end;
-
-procedure TfrmMain.btnGoClick(Sender: TObject);
-var
-  CopyCount: integer;
-  AllFiles: TStringList;
-  SoundTrack: TSoundTrackManager;
-begin
-  CopyCount:=0;
-
-  if DirectoryExists(DirEditDest.Text)=false then
-  begin
-    ShowMessage(strInvalidFolder);
-    exit;
-  end;
-
-  fMusicDumper := TTelltaleMusicDumper.Create(EditPath.Text, DirEditDest.Text, fChosenGame);
-  try
-    try
-      EnableControls(false);
-      fMusicDumper.OnProgress := OnProgress;
-
-      //Build a list of all the files in fBundle so the Soundtrack Manager can scan them
-      AllFiles := TStringList.Create;
-      try
-
-        try
-          fMusicDumper.GetListOfFilesInBundleWithoutExt(AllFiles);
-          //Create the soundtrack manager so it can see if any valid ini files exist
-          SoundTrack := TSoundTrackManager.Create(ExtractFilePath(Application.ExeName) + strSoundTrackDir, AllFiles);
-          try
-            if MessageDlg(strDumpSoundtrack, mtConfirmation, mbYesNo, 0) = mrYes then
-              CopyCount := fMusicDumper.SaveFiles(Soundtrack)
-            else
-              CopyCount := fMusicDumper.SaveFiles;
-
-          finally
-            SoundTrack.Free;
-          end;
-        except on E: EInvalidIniFile do
-          begin
-            CopyCount := fMusicDumper.SaveFiles;
-          end;
-        end;
-
-      finally
-        AllFiles.Free;
-      end;
-
-    finally
-      fMusicDumper.Free;
-      EnableControls(true);
-      Progressbar1.Position:=0;
-    end;
-  except on E: EMusicDumpError do
-    begin
-      ShowMessage(E.Message);
-      EnableControls(true);
-      Progressbar1.Position:=0;
-    end;
-  end;
-
-
-
-  if CopyCount = 0 then
-    ShowMessage('No files created! An error occured')
-  else
-    ShowMessage('All done! ' + inttostr(CopyCount) + ' files created.');
-end;
-
 
 {*****************************Popup Menu Handlers*****************************}
 procedure TfrmMain.OnProgress(ProgressMax, ProgressPos: integer);
@@ -287,8 +237,9 @@ begin
     strFolder:=GetTelltaleGamePath(CSI_DeadlyIntent);
 
     dlgBrowseForFolder.Directory := strFolder;
+    FileOpenDialog1.DefaultFolder := strFolder;
 
-    ShowMessage(strCSIFatalConspiracy);
+    ShowMessage(strCSIDeadlyIntent);
   end
   else
   if SenderName = 'MenuItemOpenCultureShock' then
@@ -461,12 +412,9 @@ begin
     strFolder:=GetTelltaleGamePath(CSI_FatalConspiracy);
 
     dlgBrowseForFolder.Directory := strFolder;
+    FileOpenDialog1.DefaultFolder := strFolder;
 
-    ShowMessage('CSI Fatal Conspiracy has the music for each of its 5 parts stored in separate folders. ' +
-                'You''ll need to dump the music from each part manually.' + #13#13 +
-                'To do this click "Open Folder", scroll down to the "Pack" folder, select one of the CSI6 folders and click the "Go" button.'
-                + #13#13 +
-                'For example, select the CSI601 folder to dump the music from the first part.');
+    ShowMessage(strCSIFatalConspiracy);
   end
   else
   if SenderName = 'MenuItemOpenPokerInventory' then
@@ -637,24 +585,134 @@ begin
   if directoryexists(strFolder) = false then
   begin
     ShowMessage(strGameNotFound);
-    EditPath.Text:='';
+    EditSourcePath.Text:='';
   end
   else
-    EditPath.Text:=strFolder;
+    EditSourcePath.Text:=strFolder;
 
 end;
 
 
 procedure TfrmMain.MenuItemOpenFolderClick(Sender: TObject);
 begin
-  btnOpenClick(frmMain);
+  OpenFolder;
 end;
 
-procedure TfrmMain.btnOpenClick(Sender: TObject);
+procedure TfrmMain.lblSupportTelltaleLinkLinkClick(Sender: TObject;
+  const Link: string; LinkType: TSysLinkType);
 begin
-  if dlgBrowseForFolder.Execute then
-    editPath.Text:=dlgBrowseForFolder.Directory;
+  ShellExecute(0, 'Open', PChar(Link), '', nil, SW_SHOWNORMAL);
 end;
 
+procedure TfrmMain.OpenFolder;
+begin
+  if Win32MajorVersion >= 6 then //Vista and above
+  begin
+    FileOpenDialog1.Title := strOpenDialogTitle;
+    if FileOpenDialog1.Execute then
+      editSourcePath.Text := FileOpenDialog1.FileName;
+  end
+  else
+  begin
+    dlgBrowseForFolder.Title := strOpenDialogTitle;
+    if dlgBrowseForFolder.Execute then
+      editSourcePath.Text := dlgBrowseForFolder.Directory;
+  end;
+end;
+
+procedure TfrmMain.btnChooseSourceClick(Sender: TObject);
+var
+  popupPoint : TPoint;
+begin
+  popupPoint.X := btnChooseSource.Left;
+  popupPoint.Y := btnChooseSource.Top + (btnChooseSource.Height div 2) ;
+  popupPoint := ClientToScreen(popupPoint) ;
+
+  btnChooseSource.DropDownMenu.Popup(popupPoint.X, popupPoint.Y);
+end;
+
+procedure TfrmMain.btnChooseDestClick(Sender: TObject);
+begin
+  if Win32MajorVersion >= 6 then //Vista and above
+  begin
+    FileOpenDialog1.Title := strSaveDialogTitle;
+    if FileOpenDialog1.Execute then
+      editDestPath.Text := FileOpenDialog1.FileName;
+  end
+  else
+  begin
+    dlgBrowseForFolder.Title := strSaveDialogTitle;
+    if dlgBrowseForFolder.Execute then
+      editDestPath.Text := dlgBrowseForFolder.Directory;
+  end;
+end;
+
+procedure TfrmMain.btnGoClick(Sender: TObject);
+var
+  CopyCount: integer;
+  AllFiles: TStringList;
+  SoundTrack: TSoundTrackManager;
+begin
+  CopyCount:=0;
+
+  if DirectoryExists(EditDestPath.Text)=false then
+  begin
+    ShowMessage(strInvalidFolder);
+    exit;
+  end;
+
+  fMusicDumper := TTelltaleMusicDumper.Create(EditSourcePath.Text, EditDestPath.Text, fChosenGame);
+  try
+    try
+      EnableControls(false);
+      fMusicDumper.OnProgress := OnProgress;
+
+      //Build a list of all the files in fBundle so the Soundtrack Manager can scan them
+      AllFiles := TStringList.Create;
+      try
+
+        try
+          fMusicDumper.GetListOfFilesInBundleWithoutExt(AllFiles);
+          //Create the soundtrack manager so it can see if any valid ini files exist
+          SoundTrack := TSoundTrackManager.Create(ExtractFilePath(Application.ExeName) + strSoundTrackDir, AllFiles);
+          try
+            if MessageDlg(strDumpSoundtrack, mtConfirmation, mbYesNo, 0) = mrYes then
+              CopyCount := fMusicDumper.SaveFiles(Soundtrack)
+            else
+              CopyCount := fMusicDumper.SaveFiles;
+
+          finally
+            SoundTrack.Free;
+          end;
+        except on E: EInvalidIniFile do
+          begin
+            CopyCount := fMusicDumper.SaveFiles;
+          end;
+        end;
+
+      finally
+        AllFiles.Free;
+      end;
+
+    finally
+      fMusicDumper.Free;
+      EnableControls(true);
+      Progressbar1.Position:=0;
+    end;
+  except on E: EMusicDumpError do
+    begin
+      ShowMessage(E.Message);
+      EnableControls(true);
+      Progressbar1.Position:=0;
+    end;
+  end;
+
+
+
+  if CopyCount = 0 then
+    ShowMessage(strNoFilesCreated)
+  else
+    ShowMessage(strAllDone + inttostr(CopyCount) + strXFilesCreated);
+end;
 
 end.
