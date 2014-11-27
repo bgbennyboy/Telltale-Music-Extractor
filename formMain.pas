@@ -138,6 +138,12 @@ type
     EditDestPath: TLabeledEdit;
     lblSupportTelltaleLink: TLinkLabel;
     lblByAuthorLink: TLinkLabel;
+    TalesFromTheBorderlands1: TMenuItem;
+    MenuItemOpenTalesFromBorderlands1: TMenuItem;
+    MenuItemOpenTalesFromBorderlands2: TMenuItem;
+    MenuItemOpenTalesFromBorderlands3: TMenuItem;
+    MenuItemOpenTalesFromBorderlands4: TMenuItem;
+    MenuItemOpenTalesFromBorderlands5: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuItemOpenFolderClick(Sender: TObject);
@@ -580,6 +586,36 @@ begin
   begin
     strFolder:=GetTelltaleGamePath(WolfAmongUs_CryWolf);
     fChosenGame := WolfAmongUs_CryWolf;
+  end
+  else
+  if SenderName = 'MenuItemOpenTalesFromBorderlands1' then
+  begin
+    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_Zer0Sum);
+    fChosenGame := TalesFromBorderlands_Zer0Sum;
+  end
+  else
+  if SenderName = 'MenuItemOpenTalesFromBorderlands2' then
+  begin
+    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_AtlasMugged);
+    fChosenGame := TalesFromBorderlands_AtlasMugged;
+  end
+  else
+  if SenderName = 'MenuItemOpenTalesFromBorderlands3' then
+  begin
+    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_CatchARide);
+    fChosenGame := TalesFromBorderlands_CatchARide;
+  end
+  else
+  if SenderName = 'MenuItemOpenTalesFromBorderlands4' then
+  begin
+    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_EscapePlanBravo);
+    fChosenGame := TalesFromBorderlands_EscapePlanBravo;
+  end
+  else
+  if SenderName = 'MenuItemOpenTalesFromBorderlands5' then
+  begin
+    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_TheVaultOfTheTraveler);
+    fChosenGame := TalesFromBorderlands_TheVaultOfTheTraveler;
   end;
 
   if directoryexists(strFolder) = false then

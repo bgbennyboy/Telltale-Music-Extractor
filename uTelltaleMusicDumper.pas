@@ -64,6 +64,9 @@ type
     function CopyBundledFiles: integer;
     function CopyBundledFilesWithSoundtrack(Soundtrack: TSoundtrackManager): integer;
     function SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
+    procedure SaveFixedMP3Stream(InStream, OutStream: TStream; FileSize, Channels: integer);
+    function ExtractFSB4(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
+    function ExtractFSB5(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
   public
     constructor Create(SearchDir, DestDir: String; Game: TTelltaleGame);
     destructor Destroy; override;
@@ -217,6 +220,11 @@ const
   WalkingDeadS2_EP3_Bundle = 'WalkingDead_pc_WalkingDead203_ms.ttarch2';
   WalkingDeadS2_EP4_Bundle = 'WalkingDead_pc_WalkingDead204_ms.ttarch2';
   WalkingDeadS2_EP5_Bundle = 'WalkingDead_pc_WalkingDead205_ms.ttarch2';
+  BorderlandsEP1_Bundle = 'Borderlands_pc_Borderlands101_ms.ttarch2';
+  BorderlandsEP2_Bundle = 'Borderlands_pc_Borderlands102_ms.ttarch2';
+  BorderlandsEP3_Bundle = 'Borderlands_pc_Borderlands103_ms.ttarch2';
+  BorderlandsEP4_Bundle = 'Borderlands_pc_Borderlands104_ms.ttarch2';
+  BorderlandsEP5_Bundle = 'Borderlands_pc_Borderlands105_ms.ttarch2';
   //HACK - if add new game - also add it to the SpecificBundleNames list at the bottom
 var
   BundleList, SpecificBundleNames: TStringList;
@@ -257,6 +265,11 @@ begin
       WalkingDead_S2_InHarmsWay:      BundleFileName := WalkingDeadS2_EP3_Bundle;
       WalkingDead_S2_AmidTheRuins:    BundleFileName := WalkingDeadS2_EP4_Bundle;
       WalkingDead_S2_NoGoingBack:     BundleFileName := WalkingDeadS2_EP5_Bundle;
+      TalesFromBorderlands_Zer0Sum:               BundleFileName := BorderlandsEP1_Bundle;
+      TalesFromBorderlands_AtlasMugged:           BundleFileName := BorderlandsEP2_Bundle;
+      TalesFromBorderlands_CatchARide:            BundleFileName := BorderlandsEP3_Bundle;
+      TalesFromBorderlands_EscapePlanBravo:       BundleFileName := BorderlandsEP4_Bundle;
+      TalesFromBorderlands_TheVaultOfTheTraveler: BundleFileName := BorderlandsEP5_Bundle;
     end;
 
     for I := 0 to BundleList.Count - 1 do
@@ -307,6 +320,11 @@ begin
         SpecificBundleNames.Add(WalkingDeadS2_EP3_Bundle);
         SpecificBundleNames.Add(WalkingDeadS2_EP4_Bundle);
         SpecificBundleNames.Add(WalkingDeadS2_EP5_Bundle);
+        SpecificBundleNames.Add(BorderlandsEP1_Bundle);
+        SpecificBundleNames.Add(BorderlandsEP2_Bundle);
+        SpecificBundleNames.Add(BorderlandsEP3_Bundle);
+        SpecificBundleNames.Add(BorderlandsEP4_Bundle);
+        SpecificBundleNames.Add(BorderlandsEP5_Bundle);
 
         for j := 0 to SpecificBundleNames.Count - 1 do
         begin
@@ -616,60 +634,303 @@ end;
 
 function TTelltaleMusicDumper.SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
 var
-  TempInt: Integer;
-  buffer: TBuffer;
-  tmpMpegHeader: TMpegHeader;
+//  TempInt: Integer;
+//  buffer: TBuffer;
+//  tmpMpegHeader: TMpegHeader;
+  Header: string;
   DestStream: TFileStream;
 begin
   result := false;
 
   SourceStream.Position := 0;
+  Header := SourceStream.ReadBlockName;
+  if (Header <> 'FSB4') and (Header <> 'FSB5') then
+    Exit;
+
+  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
+  try
+    DestStream.Position := 0;
+    SourceStream.Position := 0;
+
+    if Header = 'FSB4' then
+      Result := ExtractFSB4(SourceStream, DestStream, DestFile)
+    else
+    if Header = 'FSB5' then
+      Result := ExtractFSB5(SourceStream, DestStream, DestFile)
+    else
+    begin
+      //Log('No FSB headers found!');
+      exit;
+    end;
+  finally
+    DestStream.Free;
+  end;
+
+//  SourceStream.Position := 0;
+//
+//  if SourceStream.ReadDWord <> 876761926 then //'FSB4'
+//  begin
+//    //ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
+//    Exit;
+//  end;
+//
+//  TempInt := SourceStream.ReadDWord;
+//  if TempInt <> 1 then //Number of samples
+//  begin
+//    raise EMusicDumpError.Create( strMoreThanOneFSB + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
+//    Exit;
+//  end;
+//
+//  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
+//  try
+//    DestStream.Position := 0;
+//
+//    TempInt := SourceStream.ReadDWord; //Size of sample header
+//    SourceStream.Seek(36 + TempInt, soFromCurrent); //Puts it at start of sample data
+//
+//
+//    //Now parse the MP3
+//    while SourceStream.Position < SourceStream.Size do
+//    begin
+//      setlength(buffer, 4);
+//      TempInt := SourceStream.Read(buffer[0], 4);  //Bytes read
+//      if TempInt < 4 then exit;
+//
+//      tmpMpegHeader := GetValidatedHeader(buffer, 0);
+//      if tmpMpegHeader.valid then
+//      begin
+//        SourceStream.Seek( -4, soFromCurrent);
+//        if tmpMpegHeader.framelength + SourceStream.Position > SourceStream.Size then
+//          exit //Bad frame at the end, dont copy it
+//        else
+//          DestStream.CopyFrom(SourceStream, tmpMpegHeader.framelength);
+//      end
+//      else
+//        SourceStream.Position := SourceStream.Position -3;
+//    end;
+//
+//   finally
+//    Result := true;
+//    DestStream.Free;
+//  end;
+end;
+
+function ShouldDownmixChannels(Channels, Frame: integer): boolean;
+var
+	ChansResult: integer;
+begin
+	if (Channels and 1) = 1 then
+		ChansResult := Channels
+	else
+		ChansResult := Channels div 2;
+
+	ChansResult := frame mod ChansResult;
+
+	if (Channels <= 2) or (ChansResult = 0) then
+		result := true
+	else
+		result := false;
+end;
+
+procedure TTelltaleMusicDumper.SaveFixedMP3Stream(InStream, OutStream: TStream; FileSize, Channels: integer);
+var
+	Frame, FrameSize, n: integer;
+  Buffer: TBuffer;
+	TempBuffer: TBuffer;
+	tmpMpegHeader: TMpegHeader;
+	TempByte: Byte;
+begin
+	Frame := 0;
+	while FileSize > 0 do
+	begin
+    SetLength(buffer, 3);
+		if InStream.Read(Buffer[0], 3) <> 3 then  //bytes read
+			break;
+
+		Dec(FileSize, 3);
+		FrameSize := 0;
+    //read 3 bytes, if invalid header then read another and shuffle the bytes up in the buffer and check again.
+		while FileSize > 0 do
+		begin
+      tmpMpegHeader := GetValidatedHeader(Buffer, 0);
+		  FrameSize := tmpMpegHeader.framelength;
+      if tmpMpegHeader.valid = true then
+        if FrameSize > 0 then break;
+
+      if InStream.Size - InStream.Position < 1 then //Just in case
+      begin
+        //Log('Tried to read beyond stream in SaveFixedMP3Stream()');
+        exit;
+      end;
+      InStream.Read(TempByte, 1);
+
+		  Dec(FileSize, 1);
+
+		  Buffer[0] := Buffer[1];
+		  Buffer[1] := Buffer[2];
+		  Buffer[2] := tempbyte;
+		end;
+
+		if FileSize < 0 then break;
+
+		dec(FrameSize, 3);
+
+		if ShouldDownmixChannels(Channels, Frame) then
+      Outstream.Write(Buffer[0], 3);
+
+    if FrameSize > 0 then
+    begin
+      SetLength(TempBuffer,FrameSize);
+      n := InStream.Read(TempBuffer[0], FrameSize);
+      dec(FileSize, n);
+
+      if ShouldDownmixChannels(Channels, Frame) then
+        OutStream.Write(TempBuffer[0], n);
+
+      if n <> FrameSize then
+        break;
+    end;
+
+		inc(Frame);
+	end;
+end;
+
+function TTelltaleMusicDumper.ExtractFSB4(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
+type
+  TFSBCodec = (
+    FMOD_SOUND_FORMAT_NONE,             //* Unitialized / unknown. */
+    FMOD_SOUND_FORMAT_PCM8,             //* 8bit integer PCM data. */
+    FMOD_SOUND_FORMAT_PCM16,            //* 16bit integer PCM data. */
+    FMOD_SOUND_FORMAT_PCM24,            //* 24bit integer PCM data. */
+    FMOD_SOUND_FORMAT_PCM32,            //* 32bit integer PCM data. */
+    FMOD_SOUND_FORMAT_PCMFLOAT,         //* 32bit floating point PCM data. */
+    FMOD_SOUND_FORMAT_GCADPCM,          //* Compressed Nintendo 3DS/Wii DSP data. */
+    FMOD_SOUND_FORMAT_IMAADPCM,         //* Compressed IMA ADPCM data. */
+    FMOD_SOUND_FORMAT_VAG,              //* Compressed PlayStation Portable ADPCM data. */
+    FMOD_SOUND_FORMAT_HEVAG,            //* Compressed PSVita ADPCM data. */
+    FMOD_SOUND_FORMAT_XMA,              //* Compressed Xbox360 XMA data. */
+    FMOD_SOUND_FORMAT_MPEG,             //* Compressed MPEG layer 2 or 3 data. */
+    FMOD_SOUND_FORMAT_CELT,             //* Compressed CELT data. */
+    FMOD_SOUND_FORMAT_AT9,              //* Compressed PSVita ATRAC9 data. */
+    FMOD_SOUND_FORMAT_XWMA,             //* Compressed Xbox360 xWMA data. */
+    FMOD_SOUND_FORMAT_VORBIS           //* Compressed Vorbis data. */
+    );
+const
+  FSB_FileNameLength: integer = 30;
+  FSOUND_DELTA = $00000200;
+  FSOUND_8BITS = $00000008;
+  FSOUND_16BITS = $00000010;
+  FSOUND_MONO = $00000020;
+  FSOUND_STEREO = $00000040;
+var
+  TempInt, RecordSize, Mode, Channels: Integer;
+  Codec: TFSBCodec;
+begin
+{
+    char        id[4];      /* 'FSB4' */
+    int32_t     numsamples; /* number of samples in the file */
+    int32_t     shdrsize;   /* size in bytes of all of the sample headers including extended information */
+    int32_t     datasize;   /* size in bytes of compressed sample data */
+    uint32_t    version;    /* extended fsb version */
+    uint32_t    mode;       /* flags that apply to all samples in the fsb */
+    char        zero[8];    /* ??? */
+    uint8_t     hash[16];   /* hash??? */
+}
+  Result := false;
+
+  SourceStream.Position := 0;
+  DestStream.Position := 0;
 
   if SourceStream.ReadDWord <> 876761926 then //'FSB4'
   begin
-    //ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
+    //Log( 'Not a FSB4 header! in FileNo ' + inttostr(FileNo));
     Exit;
   end;
 
   TempInt := SourceStream.ReadDWord;
   if TempInt <> 1 then //Number of samples
   begin
-    raise EMusicDumpError.Create( strMoreThanOneFSB + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
+    raise EMusicDumpError.Create( strMoreThanOneFSB + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));  //All games so far have a separate fsb for each sound with 1 sample in the file
     Exit;
   end;
 
-  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
-  try
-    DestStream.Position := 0;
+  SourceStream.Seek(40, soFromCurrent); //Now at start of sample header
+  RecordSize := SourceStream.ReadWord; //size of this record, inclusive
+  SourceStream.Seek(FSB_FileNameLength, soFromCurrent); //Filename
+  SourceStream.Seek(16, soFromCurrent);
+  Mode := SourceStream.ReadDWord;
+  SourceStream.Seek(28, soFromCurrent);
+  if RecordSize > 80 then //Some files have extra data
+    SourceStream.Seek(RecordSize - 80, soFromCurrent);
 
-    TempInt := SourceStream.ReadDWord; //Size of sample header
-    SourceStream.Seek(36 + TempInt, soFromCurrent); //Puts it at start of sample data
+  //Now work out the codec it uses - so far its always MPEG
+  Codec := FMOD_SOUND_FORMAT_PCM16;
+  if (Mode and FSOUND_DELTA) <> 0 then
+    Codec := FMOD_SOUND_FORMAT_MPEG
+  else
+  if ((Mode and FSOUND_8BITS) <> 0) and (Codec = FMOD_SOUND_FORMAT_PCM16) then
+    Codec := FMOD_SOUND_FORMAT_PCM8;
 
+  //Get no of channels
+  Channels := 1;
+  if (Mode and FSOUND_MONO) <> 0 then
+    Channels := 1
+  else
+  if (Mode and FSOUND_STEREO) <> 0 then
+    Channels := 2;
 
-    //Now parse the MP3
-    while SourceStream.Position < SourceStream.Size do
-    begin
-      setlength(buffer, 4);
-      TempInt := SourceStream.Read(buffer[0], 4);  //Bytes read
-      if TempInt < 4 then exit;
+  if Codec = FMOD_SOUND_FORMAT_MPEG then //fix broken mp3's
+    SaveFixedMP3Stream(SourceStream, DestStream, SourceStream.Size - SourceStream.Position, Channels)
+  else
+    DestStream.CopyFrom(SourceStream, SourceStream.Size - SourceStream.Position);
 
-      tmpMpegHeader := GetValidatedHeader(buffer, 0);
-      if tmpMpegHeader.valid then
-      begin
-        SourceStream.Seek( -4, soFromCurrent);
-        if tmpMpegHeader.framelength + SourceStream.Position > SourceStream.Size then
-          exit //Bad frame at the end, dont copy it
-        else
-          DestStream.CopyFrom(SourceStream, tmpMpegHeader.framelength);
-      end
-      else
-        SourceStream.Position := SourceStream.Position -3;
-    end;
+  Result := true;
+end;
 
-   finally
-    Result := true;
-    DestStream.Free;
+function TTelltaleMusicDumper.ExtractFSB5(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
+var
+  TempInt, FileOffset: integer;
+  Offset, TheType: cardinal;
+  Channels: Word;
+begin
+  Result := false;
+
+  SourceStream.Position := 0;
+  DestStream.Position := 0;
+
+  if SourceStream.ReadBlockName <> 'FSB5' then
+  begin
+    //Log( 'Not a FSB5 header! in FileNo ' + inttostr(FileNo));
+    Exit;
   end;
+
+
+  SourceStream.Seek(4, soFromCurrent);
+
+  TempInt := SourceStream.ReadDWord;
+  if TempInt <> 1 then //Number of samples
+  begin
+    raise EMusicDumpError.Create( strMoreThanOneFSB + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));  //All games so far have a separate fsb for each sound with 1 sample in the file
+    Exit;
+  end;
+
+  FileOffset := SourceStream.ReadDWord + SourceStream.ReadDWord + 60;
+
+  SourceStream.Seek(40, sofromcurrent); //now at end of file header
+
+  Offset := SourceStream.ReadDWord;
+  SourceStream.Seek(4, sofromcurrent); //samples
+  TheType := Offset and ((1 shl 7) -1);
+  SourceStream.Seek(4, sofromcurrent); //offset again
+  Channels := (TheType shr 5) + 1;
+
+
+  SourceStream.Seek(FileOffset, soFromBeginning); //Now at start of data???
+
+  //Assume its mp3 - so far everything is
+  SaveFixedMP3Stream(SourceStream, DestStream, SourceStream.Size - SourceStream.Position, Channels);
+
+  Result := true;
 end;
 
 procedure TTelltaleMusicDumper.TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
