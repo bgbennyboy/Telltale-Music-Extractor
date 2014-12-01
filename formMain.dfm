@@ -132,10 +132,15 @@ object frmMain: TfrmMain
     Images = ImageListSmall
     Left = 136
     Top = 432
-    object MenuItemOpenFolder: TMenuItem
+    object MenuOpenFolder: TMenuItem
       Caption = 'Open Folder'
       ImageIndex = 0
-      OnClick = MenuItemOpenFolderClick
+      OnClick = MenuOpenFolderClick
+    end
+    object MenuOpenFile: TMenuItem
+      Caption = 'Open File'
+      ImageIndex = 17
+      OnClick = OpenPopupMenuHandler
     end
     object N2: TMenuItem
       Caption = '-'
@@ -143,27 +148,27 @@ object frmMain: TfrmMain
     object BackToTheFuture2: TMenuItem
       Caption = 'Back To The Future'
       ImageIndex = 9
-      object MenuItemOpenBTTF1: TMenuItem
+      object Menu_BackToTheFuture_ItsAboutTime: TMenuItem
         Caption = 'Back To The Future - It'#39's About Time'
         ImageIndex = 9
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenBTTF2: TMenuItem
+      object Menu_BackToTheFuture_GetTannen: TMenuItem
         Caption = 'Back To The Future - Get Tannen!'
         ImageIndex = 9
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenBTTF3: TMenuItem
+      object Menu_BackToTheFuture_CitizenBrown: TMenuItem
         Caption = 'Back To The Future - Citizen Brown'
         ImageIndex = 9
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenBTTF4: TMenuItem
+      object Menu_BackToTheFuture_DoubleVisions: TMenuItem
         Caption = 'Back To The Future - Double Visions'
         ImageIndex = 9
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenBTTF5: TMenuItem
+      object Menu_BackToTheFuture_OutaTime: TMenuItem
         Caption = 'Back To The Future - Outa Time'
         ImageIndex = 9
         OnClick = OpenPopupMenuHandler
@@ -172,12 +177,12 @@ object frmMain: TfrmMain
     object Bone1: TMenuItem
       Caption = 'Bone'
       ImageIndex = 1
-      object MenuItemOpenBone1: TMenuItem
+      object Menu_Bone_Boneville: TMenuItem
         Caption = 'Bone: Out From Boneville'
         ImageIndex = 1
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenBone2: TMenuItem
+      object Menu_Bone_CowRace: TMenuItem
         Caption = 'Bone: The Great Cow Race'
         ImageIndex = 1
         OnClick = OpenPopupMenuHandler
@@ -186,22 +191,22 @@ object frmMain: TfrmMain
     object CrimeSceneInvestigation1: TMenuItem
       Caption = 'Crime Scene Investigation'
       ImageIndex = 5
-      object MenuItemOpenCSI: TMenuItem
+      object Menu_CSI_3Dimensions: TMenuItem
         Caption = 'CSI: 3 Dimensions of Murder'
         ImageIndex = 5
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenCSIHardEvidence: TMenuItem
+      object Menu_CSI_HardEvidence: TMenuItem
         Caption = 'CSI: Hard Evidence'
         ImageIndex = 5
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenCSIDeadlyIntent: TMenuItem
+      object Menu_CSI_DeadlyIntent: TMenuItem
         Caption = 'CSI: Deadly Intent'
         ImageIndex = 5
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenCSIFatalConspiracy: TMenuItem
+      object Menu_CSI_FatalConspiracy: TMenuItem
         Caption = 'CSI: Fatal Conspiracy'
         ImageIndex = 5
         OnClick = OpenPopupMenuHandler
@@ -210,17 +215,17 @@ object frmMain: TfrmMain
     object HectorBadgeOfCarnage1: TMenuItem
       Caption = 'Hector: Badge Of Carnage'
       ImageIndex = 10
-      object MenuItemOpenHector101: TMenuItem
+      object Menu_Hector_WeNegotiateWithTerrorists: TMenuItem
         Caption = 'We Negotiate with Terrorists'
         ImageIndex = 10
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenHector102: TMenuItem
+      object Menu_Hector_SenselessActsOfJustice: TMenuItem
         Caption = 'Senseless Acts Of Justice'
         ImageIndex = 10
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenHector103: TMenuItem
+      object Menu_Hector_BeyondReasonableDoom: TMenuItem
         Caption = 'Beyond Reasonable Doom'
         ImageIndex = 10
         OnClick = OpenPopupMenuHandler
@@ -229,28 +234,28 @@ object frmMain: TfrmMain
     object JurassicParkTheGame: TMenuItem
       Caption = 'Jurassic Park The Game'
       ImageIndex = 11
-      object MenuItemOpenJurassicParkEP1: TMenuItem
+      object Menu_JurassicPark_EP1: TMenuItem
         Caption = 'Jurassic Park: Episode 1'
         ImageIndex = 11
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenJurassicParkEP2: TMenuItem
+      object Menu_JurassicPark_EP2: TMenuItem
         Caption = 'Jurassic Park: Episode 2'
         ImageIndex = 11
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenJurassicParkEP3: TMenuItem
+      object Menu_JurassicPark_EP3: TMenuItem
         Caption = 'Jurassic Park: Episode 3'
         ImageIndex = 11
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenJurassicParkEP4: TMenuItem
+      object Menu_JurassicPark_EP4: TMenuItem
         Caption = 'Jurassic Park: Episode 4'
         ImageIndex = 11
         OnClick = OpenPopupMenuHandler
       end
     end
-    object MenuItemOpenLawAndOrderLegacies: TMenuItem
+    object Menu_LawAndOrder_Legacies: TMenuItem
       Caption = 'Law && Order: Legacies'
       ImageIndex = 5
       OnClick = OpenPopupMenuHandler
@@ -258,12 +263,12 @@ object frmMain: TfrmMain
     object MenuPoker: TMenuItem
       Caption = 'Poker Night'
       ImageIndex = 4
-      object MenuItemOpenPokerInventory: TMenuItem
+      object Menu_PokerNight_Inventory: TMenuItem
         Caption = 'Poker Night At The Inventory'
         ImageIndex = 4
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenPoker2: TMenuItem
+      object Menu_PokerNight_2: TMenuItem
         Caption = 'Poker Night 2'
         ImageIndex = 4
         OnClick = OpenPopupMenuHandler
@@ -272,12 +277,12 @@ object frmMain: TfrmMain
     object PuzzleAgent1: TMenuItem
       Caption = 'Puzzle Agent'
       ImageIndex = 8
-      object MenuItemOpenPuzzleAgent101: TMenuItem
+      object Menu_PuzzleAgent_Scoggins: TMenuItem
         Caption = 'The Mystery of Scoggins'
         ImageIndex = 8
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenPuzzleAgent102: TMenuItem
+      object Menu_PuzzleAgent_2: TMenuItem
         Caption = 'Puzzle Agent 2'
         ImageIndex = 8
         OnClick = OpenPopupMenuHandler
@@ -286,32 +291,32 @@ object frmMain: TfrmMain
     object SamAndMaxSeason11: TMenuItem
       Caption = 'Sam And Max: Season 1'
       ImageIndex = 3
-      object MenuItemOpenCultureShock: TMenuItem
+      object Menu_SamAndMax_CultureShock: TMenuItem
         Caption = 'Culture Shock'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenSituationComedy: TMenuItem
+      object Menu_SamAndMax_SituationComedy: TMenuItem
         Caption = 'Situation Comedy'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenMoleMobMeatball: TMenuItem
+      object Menu_SamAndMax_MoleMobMeatball: TMenuItem
         Caption = 'The Mole, the Mob and the Meatball'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenAbeLincoln: TMenuItem
+      object Menu_SamAndMax_AbeLincoln: TMenuItem
         Caption = 'Abe Lincoln Must Die!'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenReality20: TMenuItem
+      object Menu_SamAndMax_Reality20: TMenuItem
         Caption = 'Reality 2.0'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenBrightSideOfTheMoon: TMenuItem
+      object Menu_SamAndMax_BrightSideMoon: TMenuItem
         Caption = 'Bright Side Of The Moon'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
@@ -320,27 +325,27 @@ object frmMain: TfrmMain
     object SamAndMaxSeason21: TMenuItem
       Caption = 'Sam And Max: Season 2'
       ImageIndex = 3
-      object MenuItemOpenIceStationSanta: TMenuItem
+      object Menu_SamAndMax_IceStationSanta: TMenuItem
         Caption = 'Ice Station Santa'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenMoaiBetterBlues: TMenuItem
+      object Menu_SamAndMax_MoaiBetterBlues: TMenuItem
         Caption = 'Moai Better Blues'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenNightOfTheRavingDead: TMenuItem
+      object Menu_SamAndMax_NightOfTheRavingDead: TMenuItem
         Caption = 'Night Of The Raving Dead'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenChariotsoftheDogs: TMenuItem
+      object Menu_SamAndMax_ChariotsOfTheDogs: TMenuItem
         Caption = 'Chariots of the Dogs'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWhatsNewBeelzebub: TMenuItem
+      object Menu_SamAndMax_WhatsNewBeelzebub: TMenuItem
         Caption = 'What'#39's New Beelzebub'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
@@ -349,27 +354,27 @@ object frmMain: TfrmMain
     object SamAndMaxSeason31: TMenuItem
       Caption = 'Sam And Max: Season 3'
       ImageIndex = 3
-      object MenuItemOpenSamAndMax301: TMenuItem
+      object Menu_SamAndMax_PenalZone: TMenuItem
         Caption = 'The Penal Zone'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenSamAndMax302: TMenuItem
+      object Menu_SamAndMax_TombOfSammunMak: TMenuItem
         Caption = 'The Tomb of Sammun-Mak'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenSamAndMax303: TMenuItem
+      object Menu_SamAndMax_TheyStoleMaxsBrain: TMenuItem
         Caption = 'They Stole Max'#39's Brain!'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenSamAndMax304: TMenuItem
+      object Menu_SamAndMax_BeyondAlleyOfDolls: TMenuItem
         Caption = 'Beyond the Alley of the Dolls'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenSamAndMax305: TMenuItem
+      object Menu_SamAndMax_CityThatDaresNotSleep: TMenuItem
         Caption = 'The City That Dares Not Sleep'
         ImageIndex = 3
         OnClick = OpenPopupMenuHandler
@@ -378,27 +383,27 @@ object frmMain: TfrmMain
     object StrongBadSeason11: TMenuItem
       Caption = 'Strong Bad Season 1'
       ImageIndex = 2
-      object MenuItemOpenStrongBadEP1: TMenuItem
+      object Menu_StrongBad_HomestarRuiner: TMenuItem
         Caption = 'Homestar Ruiner'
         ImageIndex = 2
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenStrongBadEP2: TMenuItem
+      object Menu_StrongBad_StrongBadiaTheFree: TMenuItem
         Caption = 'Strong Badia The Free'
         ImageIndex = 2
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenStrongBadEP3: TMenuItem
+      object Menu_StrongBad_BaddestOfTheBands: TMenuItem
         Caption = 'Baddest Of The Bands'
         ImageIndex = 2
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenStrongBadEP4: TMenuItem
+      object Menu_StrongBad_Daneresque3: TMenuItem
         Caption = 'Dangeresque 3'
         ImageIndex = 2
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenStrongBadEP5: TMenuItem
+      object Menu_StrongBad_8BitIsEnough: TMenuItem
         Caption = '8-Bit Is Enough'
         ImageIndex = 2
         OnClick = OpenPopupMenuHandler
@@ -407,27 +412,27 @@ object frmMain: TfrmMain
     object TalesFromTheBorderlands1: TMenuItem
       Caption = 'Tales From The Borderlands'
       ImageIndex = 15
-      object MenuItemOpenTalesFromBorderlands1: TMenuItem
+      object Menu_TalesFromBorderlands_Zer0Sum: TMenuItem
         Caption = 'Zer0 Sum'
         ImageIndex = 15
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenTalesFromBorderlands2: TMenuItem
+      object Menu_TalesFromBorderlands_AtlasMugged: TMenuItem
         Caption = 'Atlas Mugged'
         ImageIndex = 15
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenTalesFromBorderlands3: TMenuItem
+      object Menu_TalesFromBorderlands_CatchARide: TMenuItem
         Caption = 'Catch A Ride'
         ImageIndex = 15
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenTalesFromBorderlands4: TMenuItem
+      object Menu_TalesFromBorderlands_EscapePlanBravo: TMenuItem
         Caption = 'Escape Plan Bravo'
         ImageIndex = 15
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenTalesFromBorderlands5: TMenuItem
+      object Menu_TalesFromBorderlands_TheVaultOfTheTraveler: TMenuItem
         Caption = 'The Vault of the Traveler'
         ImageIndex = 15
         OnClick = OpenPopupMenuHandler
@@ -436,33 +441,33 @@ object frmMain: TfrmMain
     object TalesOfMonkeyIsland1: TMenuItem
       Caption = 'Tales Of Monkey Island'
       ImageIndex = 7
-      object MenuItemOpenMonkeyEP1: TMenuItem
+      object Menu_Monkey_ScreamingNarwhal: TMenuItem
         Caption = 'Launch of the Screaming Narwhal'
         ImageIndex = 7
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenMonkeyEP2: TMenuItem
+      object Menu_Monkey_SpinnerCay: TMenuItem
         Caption = 'The Siege of Spinner Cay'
         ImageIndex = 7
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenMonkeyEP3: TMenuItem
+      object Menu_Monkey_LairLeviathan: TMenuItem
         Caption = 'Lair of the Leviathan'
         ImageIndex = 7
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenMonkeyEP4: TMenuItem
+      object Menu_Monkey_TrialExecution: TMenuItem
         Caption = 'The Trial and Execution of Guybrush Threepwood'
         ImageIndex = 7
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenMonkeyEP5: TMenuItem
+      object Menu_Monkey_PirateGod: TMenuItem
         Caption = 'Rise of the Pirate God'
         ImageIndex = 7
         OnClick = OpenPopupMenuHandler
       end
     end
-    object MenuItemOpenTexas: TMenuItem
+    object Menu_Texas_Holdem: TMenuItem
       Caption = 'Telltale Texas Hold'#39'em'
       ImageIndex = 4
       OnClick = OpenPopupMenuHandler
@@ -473,32 +478,32 @@ object frmMain: TfrmMain
       object SeasonOne1: TMenuItem
         Caption = 'Season One'
         ImageIndex = 12
-        object MenuItemOpenWalkingDeadEP1: TMenuItem
+        object Menu_WalkingDead_ANewDay: TMenuItem
           Caption = 'The Walking Dead: A New Day'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDeadEP2: TMenuItem
+        object Menu_WalkingDead_StarvedForHelp: TMenuItem
           Caption = 'The Walking Dead: Starved For Help'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDeadEP3: TMenuItem
+        object Menu_WalkingDead_LongRoadAhead: TMenuItem
           Caption = 'The Walking Dead: Long Road Ahead'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDeadEP4: TMenuItem
+        object Menu_WalkingDead_AroundEveryCorner: TMenuItem
           Caption = 'The Walking Dead: Around Every Corner'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDeadEP5: TMenuItem
+        object Menu_WalkingDead_NoTimeLeft: TMenuItem
           Caption = 'The Walking Dead: No Time Left'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDeadEP6: TMenuItem
+        object Menu_WalkingDead_400Days: TMenuItem
           Caption = 'The Walking Dead: 400 Days (DLC)'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
@@ -507,27 +512,27 @@ object frmMain: TfrmMain
       object SeasonTwo1: TMenuItem
         Caption = 'Season Two'
         ImageIndex = 12
-        object MenuItemOpenWalkingDead_S2_E1: TMenuItem
+        object Menu_WalkingDead_S2_AllThatRemains: TMenuItem
           Caption = 'The Walking Dead: All That Remains'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDead_S2_E2: TMenuItem
+        object Menu_WalkingDead_S2_AHouseDivided: TMenuItem
           Caption = 'The Walking Dead: A House Divided'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDead_S2_E3: TMenuItem
+        object Menu_WalkingDead_S2_InHarmsWay: TMenuItem
           Caption = 'The Walking Dead: In Harm'#39's Way'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDead_S2_E4: TMenuItem
+        object Menu_WalkingDead_S2_AmidTheRuins: TMenuItem
           Caption = 'The Walking Dead: Amid The Ruins'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
         end
-        object MenuItemOpenWalkingDead_S2_E5: TMenuItem
+        object Menu_WalkingDead_S2_NoGoingBack: TMenuItem
           Caption = 'The Walking Dead: No Going Back'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
@@ -537,27 +542,27 @@ object frmMain: TfrmMain
     object TheWolfAmongUs1: TMenuItem
       Caption = 'The Wolf Among Us'
       ImageIndex = 13
-      object MenuItemOpenWolfAmongUs1: TMenuItem
+      object Menu_WolfAmongUs_Faith: TMenuItem
         Caption = 'Episode 1: Faith'
         ImageIndex = 13
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWolfAmongUs2: TMenuItem
+      object Menu_WolfAmongUs_SmokeAndMirrors: TMenuItem
         Caption = 'Episode 2: Smoke And Mirrors'
         ImageIndex = 13
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWolfAmongUs3: TMenuItem
+      object Menu_WolfAmongUs_ACrookedMile: TMenuItem
         Caption = 'Episode 3: A Crooked Mile'
         ImageIndex = 13
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWolfAmongUs4: TMenuItem
+      object Menu_WolfAmongUs_InSheepsClothing: TMenuItem
         Caption = 'Episode 4: In Sheep'#39's Clothing'
         ImageIndex = 13
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWolfAmongUs5: TMenuItem
+      object Menu_WolfAmongUs_CryWolf: TMenuItem
         Caption = 'Episode 5: Cry Wolf'
         ImageIndex = 13
         OnClick = OpenPopupMenuHandler
@@ -566,22 +571,22 @@ object frmMain: TfrmMain
     object WallaceandGromitsGrandAdventures1: TMenuItem
       Caption = 'Wallace and Gromits Grand Adventures'
       ImageIndex = 6
-      object MenuItemOpenWallaceEP1: TMenuItem
+      object Menu_WallaceAndGromit_FrightOfTheBumblebees: TMenuItem
         Caption = 'Fright Of The Bumblebees'
         ImageIndex = 6
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWallaceEP2: TMenuItem
+      object Menu_WallaceAndGromit_TheLastResort: TMenuItem
         Caption = 'The Last Resort'
         ImageIndex = 6
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWallaceEP3: TMenuItem
+      object Menu_WallaceAndGromit_Muzzled: TMenuItem
         Caption = 'Muzzled!'
         ImageIndex = 6
         OnClick = OpenPopupMenuHandler
       end
-      object MenuItemOpenWallaceEP4: TMenuItem
+      object Menu_WallaceAndGromit_TheBogeyMan: TMenuItem
         Caption = 'The Bogey Man'
         ImageIndex = 6
         OnClick = OpenPopupMenuHandler
@@ -594,133 +599,133 @@ object frmMain: TfrmMain
     Left = 224
     Top = 432
     Bitmap = {
-      494C010111001500040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010112001500040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000200000008000000100000001500000016000000100000000A0000
-      0003000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000300000000000000000000000000000000000000000001011515323E8C1E46
+      56A5286076C241A4CBFF41A4CBFF020708430000011600000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00040000000F0000002700000052000000810000008F0000006C0000003B0000
-      00200000000D0000000200000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      00200000000D0000000200000000000000000000000041A4CBFF41A4CBFF41A4
+      CBFF41A4CBFF56D7F3FF41A4CBFF398FB1FF3D92B4FF41A4CBFF41A4CBFF41A4
+      CBFF2A6981CC0A1A206600000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000003D0D0700A8432404E6824709FD94510AFF6A3B08F6221302D00302
-      0087000000270000000700000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0087000000270000000700000000000000000000000041A4CBFF62DBF4FF60DA
+      F4FF5EDAF3FF5CD9F3FF41A4CBFF4DADC6FF4FB0C9FF58D0EAFF55D0EAFF53CF
+      EAFF4DC6E3FF2A6981CC00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0044412404E1D57510FFF0A34FFFF2AD63FFF2B069FFF2AC60FFEE9534FF9552
-      0BFF120A01AD0000001400000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0BFF120A01AD0000001400000000000000000000000041A4CBFF6BDEF4FF68DD
+      F5FF66DCF4FF63DCF4FF41A4CBFF50AEC6FF51B0C9FF5DD1EBFF59D1EAFF56D0
+      EAFFD3A548FF41A4CBFF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000000000000000000030532E
       05ECEA8212FFEE9433FFE07B11FFC56C0EFFBD680EFFD1730FFFED8A20FFEF98
-      3AFFAB5E0CFF1109019D00000001000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      3AFFAB5E0CFF1109019D00000001000000000000000041A4CBFF73E1F5FF70E0
+      F6FF6EDFF6FF6BDEF5FF41A4CBFF53AEC6FF54B1C9FF60D2EBFF5DD2EBFF5AD0
+      EAFFDDB95CFF41A4CBFF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000004231302BEAF60
       0DFFC76E0FFF95520BFF8C4D0AFF8B4C0AFF874A0AFF894B0AFF9C550BFFB262
-      0DFFE17C11FF824709FF02010051000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0DFFE17C11FF824709FF02010051000000000000000041A4CBFF7CE4F7FF7AE3
+      F6FF77E2F6FF74E1F6FF41A4CBFF2F8557FF2E834CFF309440FF44AD87FF5ED2
+      EBFFFFFFFFFF41A4CBFF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000000000000010000406B3B07FF9C55
       0BFF804609FF834809FF8E4E0AFF8C4D0AFF854909FF784208FF794208FF7C44
-      09FFA0570BFFB3620DFF231302BC000000020000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      09FFA0570BFFB3620DFF231302BC000000020000000041A4CBFF86E7F7FF83E6
+      F8FF80E5F7FF7DE4F6FF41A4CBFF58B0C7FF419782FF35AF43FF32A93EFF2F92
+      3BFFF2F8F2FF41A4CBFF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000000A060182703E08FF7942
       08FF7E4509FF96520BFF9E560BFFA35A0CFF9F570BFF92500AFF7D4509FF733F
-      08FF7D4509FFA55B0CFF593106ED000000200000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      08FF7D4509FFA55B0CFF593106ED000000200000000041A4CBFF8FEAF8FF8CE9
+      F9FF89E8F8FF87E7F8FF41A4CBFF5CB1C7FF5DB4CBFF47AC7EFF35B043FF31AA
+      3FFF319543FF41A4CBFF00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000000000000170C01A5613506FF7741
       08FF9D560BFFAE600DFFB4630DFFB5630DFFB7640DFFB3620DFFA35A0CFF8A4C
-      0AFF794208FF99540BFF6F3D08FF000000390000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0AFF794208FF99540BFF6F3D08FF000000390000000041A4CBFF98EDF9FF95EC
+      F9FF93EBF9FF90EAF9FF41A4CBFF5FB2C8FF60B4CBFF73D7EDFF30923BFF3FD5
+      5AFF2FA43BFF2B7860E300000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000000000000130A019C623607FF894B
       0AFFAC5F0DFFC46C0EFFDD7910FFE57E11FFE47D11FFDB7810FFC66D0FFFA95D
-      0CFF8A4C0AFF904F0AFF653807FC000000340000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0CFF8A4C0AFF904F0AFF653807FC000000340000000041A4CBFFA0F0FAFF9EEF
+      FAFF9BEEF9FF99EDF9FF41A4CBFF62B3C8FF64B5CBFF78D8EEFF3DA05DFF41D2
+      59FF3ECB55FF25792FEB00000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000000000000603006D683907FF904F
       0AFFBC670EFFE47D11FFED902CFFEF9B40FFF09E45FFEE9637FFEC8619FFC56D
-      0FFF9E560BFF874A0AFF402304E0000000120000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0FFF9E560BFF874A0AFF402304E0000000120000000041A4CBFFA8F3FBFFA5F2
+      FAFFA4F1FBFFA1F0FAFF41A4CBFF65B4C8FF4FA197FF48A972FF359747FF5CE2
+      73FF60E779FF2A892DFB02080340020803400000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000025512C06F49451
       0AFFC86E0FFFED8D25FFF1AA5DFFF4BC81FFF5BF85FFF2B16AFFEF9738FFD575
-      10FFAB5E0CFF7A4309FF1209019B000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      10FFAB5E0CFF7A4309FF1209019B000000000000000041A4CBFFAFF5FCFFADF4
+      FCFFABF3FBFFA8F3FBFF41A4CBFF68B4C9FF409271FF37A040FF52CF67FF61EA
+      7CFF64F080FF4DC65EFF359E3DFF2A892DFC0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000000000000000000000C07018B7540
       08FFC36B0EFFEE9432FFF4BA7AFFF9DAB9FFFAE4CDFFF8D7B4FFF1A553FFDE7A
-      10FF9B550BFF4E2B06F000000028000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      10FF9B550BFF4E2B06F000000028000000000000000041A4CBFFB5F7FCFFB3F6
+      FDFFB1F5FCFFAFF5FCFF41A4CBFF6CB5C9FF6CB7CCFF349542FF3BA746FF5BE0
+      74FF63ED7EFF56D86CFF2B8B2EFE030D044E0000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000091D0F
       02B7854909FFE07B11FFF2B069FFF8D6B2FFFADFC3FFF6C692FFEE922EFFA35A
-      0CFF5B3206F90301005700000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      0CFF5B3206F90301005700000000000000000000000041A4CBFFB9F8FDFFB8F7
+      FDFFB6F7FDFF5DB8D7FF5EB6D9FF70BACCFF86D2E5FF85D9E3FF2F9036FF45B7
+      54FF5ADE72FF3FB04AFF0512065C000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000B0D0701905D3407F5AF600DFFE68011FFEB8312FFC36B0EFF814609FF311B
-      03D30101004B0000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      03D30101004B0000000000000000000000000000000041A4CBFF62BBDAFF41A4
+      CBFF41A4CBFF7EC6E0FFA5D0DCFFD4F0F7FFD8F4FAFFD7F3FAFFACDAC8FF2D8E
+      30FF3AA744FF0B240C8200000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000002E07030079130B01AA180D01B40D070198020100590000
-      000F000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
+      000F00000000000000000000000000000000000000005AA6C3F04C9EBDF04BAA
+      D0FF41A4CBFF41A4CBFF41A4CBFF41A4CBFF41A4CBFF41A4CBFF41A4CBFF2A74
+      6EDC14392A9D0000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1261,7 +1266,7 @@ object frmMain: TfrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
   end
-  object FileOpenDialog1: TFileOpenDialog
+  object FileOpenDialogFolder: TFileOpenDialog
     FavoriteLinks = <>
     FileTypes = <>
     Options = [fdoPickFolders]
@@ -2867,5 +2872,10 @@ object frmMain: TfrmMain
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object OpenDialogFile: TOpenDialog
+    Filter = 'Ttarch and Ttarch2 Bundles|*.ttarch;*.ttarch2'
+    Left = 184
+    Top = 304
   end
 end

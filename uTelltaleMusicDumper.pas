@@ -6,19 +6,9 @@
 ******************************************************
 }
 {
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 }
 
 unit uTelltaleMusicDumper;
@@ -60,15 +50,16 @@ type
     procedure FindFilesInDirByExt(Path, FileExt: string; FileList: TStrings);
     procedure LoadTtarchBundle;
     procedure TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
+    procedure SaveFixedMP3Stream(InStream, OutStream: TStream; FileSize, Channels: integer);
     function CopyUnbundledFiles: integer;
     function CopyBundledFiles: integer;
     function CopyBundledFilesWithSoundtrack(Soundtrack: TSoundtrackManager): integer;
     function SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
-    procedure SaveFixedMP3Stream(InStream, OutStream: TStream; FileSize, Channels: integer);
     function ExtractFSB4(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
     function ExtractFSB5(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
   public
-    constructor Create(SearchDir, DestDir: String; Game: TTelltaleGame);
+    constructor Create(SearchDir, DestDir: String; Game: TTelltaleGame); overload;
+    constructor Create(DestDir: String; Game: TTelltaleGame; TtarchFile: string); overload;
     destructor Destroy; override;
     function SaveFiles: integer; overload;
     function SaveFiles(Soundtrack: TSoundtrackManager): integer; overload;
@@ -78,6 +69,7 @@ type
 
 implementation
 
+//Normal constructor  - search a directory for the music and determine the music type
 constructor TTelltaleMusicDumper.Create(SearchDir, DestDir: string; Game: TTelltaleGame);
 begin
   fDestDir      := IncludeTrailingPathDelimiter(DestDir);
@@ -96,7 +88,22 @@ begin
 
 end;
 
+//For 'open file' - open a specific ttarch/ttarch2 bundle
+constructor TTelltaleMusicDumper.Create(DestDir: String; Game: TTelltaleGame;
+  TtarchFile: string);
+begin
+  fDestDir      := IncludeTrailingPathDelimiter(DestDir);
+  if DirectoryExists(fDestDir) = false then
+    raise EMusicDumpError.Create(strInvalidFolder);
 
+  fGame         := Game;
+  fSourceFiles  := TStringList.Create;
+
+  fSourceDir := '';
+  fTtarchFileName := TtarchFile;
+  fMusicType := mt_TTARCH;
+  LoadTtarchBundle;
+end;
 
 destructor TTelltaleMusicDumper.Destroy;
 begin
@@ -225,10 +232,9 @@ const
   BorderlandsEP3_Bundle = 'Borderlands_pc_Borderlands103_ms.ttarch2';
   BorderlandsEP4_Bundle = 'Borderlands_pc_Borderlands104_ms.ttarch2';
   BorderlandsEP5_Bundle = 'Borderlands_pc_Borderlands105_ms.ttarch2';
-  //HACK - if add new game - also add it to the SpecificBundleNames list at the bottom
 var
-  BundleList, SpecificBundleNames: TStringList;
-  i, j: integer;
+  BundleList: TStringList;
+  i: integer;
   BundleFileName: string;
 begin
 {
@@ -255,16 +261,16 @@ begin
 
     //For .ttarch2 bundles try and find a specific file - see below
     case TheGame of
-      WolfAmongUs_Faith:              BundleFileName := WolfEP1_MusicBundle;
-      WolfAmongUs_SmokeAndMirrors:    BundleFileName := WolfEP2_MusicBundle;
-      WolfAmongUs_ACrookedMile:       BundleFileName := WolfEP3_MusicBundle;
-      WolfAmongUs_InSheepsClothing:   BundleFileName := WolfEP4_MusicBundle;
-      WolfAmongUs_CryWolf:            BundleFileName := WolfEP5_MusicBundle;
-      WalkingDead_S2_AllThatRemains:  BundleFileName := WalkingDeadS2_EP1_Bundle;
-      WalkingDead_S2_AHouseDivided:   BundleFileName := WalkingDeadS2_EP2_Bundle;
-      WalkingDead_S2_InHarmsWay:      BundleFileName := WalkingDeadS2_EP3_Bundle;
-      WalkingDead_S2_AmidTheRuins:    BundleFileName := WalkingDeadS2_EP4_Bundle;
-      WalkingDead_S2_NoGoingBack:     BundleFileName := WalkingDeadS2_EP5_Bundle;
+      WolfAmongUs_Faith:                          BundleFileName := WolfEP1_MusicBundle;
+      WolfAmongUs_SmokeAndMirrors:                BundleFileName := WolfEP2_MusicBundle;
+      WolfAmongUs_ACrookedMile:                   BundleFileName := WolfEP3_MusicBundle;
+      WolfAmongUs_InSheepsClothing:               BundleFileName := WolfEP4_MusicBundle;
+      WolfAmongUs_CryWolf:                        BundleFileName := WolfEP5_MusicBundle;
+      WalkingDead_S2_AllThatRemains:              BundleFileName := WalkingDeadS2_EP1_Bundle;
+      WalkingDead_S2_AHouseDivided:               BundleFileName := WalkingDeadS2_EP2_Bundle;
+      WalkingDead_S2_InHarmsWay:                  BundleFileName := WalkingDeadS2_EP3_Bundle;
+      WalkingDead_S2_AmidTheRuins:                BundleFileName := WalkingDeadS2_EP4_Bundle;
+      WalkingDead_S2_NoGoingBack:                 BundleFileName := WalkingDeadS2_EP5_Bundle;
       TalesFromBorderlands_Zer0Sum:               BundleFileName := BorderlandsEP1_Bundle;
       TalesFromBorderlands_AtlasMugged:           BundleFileName := BorderlandsEP2_Bundle;
       TalesFromBorderlands_CatchARide:            BundleFileName := BorderlandsEP3_Bundle;
@@ -277,6 +283,10 @@ begin
       //For .ttarch2 bundles try and find a specific file - as bundles are often all in the same dir along with a boot music bundle
       if Uppercase( ExtractFileExt( BundleList.Strings[i] )) = '.TTARCH2' then
       begin
+        if TheGame = UnknownGame then //Open folder used - we dont know what game this is - so we cant choose the correct bundle
+          raise EMusicDumpError.Create(strMultipleMusicBundles);
+
+        //Try and match one of the bundles in the folder to the BundleFileName that we expect for that game
         if UpperCase(BundleList.Strings[i]) = UpperCase(BundleFileName) then
         begin
           result := BundleList.Strings[i];
@@ -297,53 +307,6 @@ begin
         break;
       end
     end;
-
-    {
-    Edge case - they've used 'open folder' to manually choose a game. They've
-    chosen a folder with one of the new .ttarch2 games in it - so we dont know
-    what specific episode they actually want from that folder.
-    Hack for now - just choose the first recognised bundle in that folder
-    TODO - THIS IS AN AWFUL HACK - FIX THIS
-    Having to remember to add new constants to the stringlist below is particularly bad
-    }
-    if result = '' then
-    begin
-      SpecificBundleNames := TstringList.Create;
-      try
-        SpecificBundleNames.Add(WolfEP1_MusicBundle);
-        SpecificBundleNames.Add(WolfEP2_MusicBundle);
-        SpecificBundleNames.Add(WolfEP3_MusicBundle);
-        SpecificBundleNames.Add(WolfEP4_MusicBundle);
-        SpecificBundleNames.Add(WolfEP5_MusicBundle);
-        SpecificBundleNames.Add(WalkingDeadS2_EP1_Bundle);
-        SpecificBundleNames.Add(WalkingDeadS2_EP2_Bundle);
-        SpecificBundleNames.Add(WalkingDeadS2_EP3_Bundle);
-        SpecificBundleNames.Add(WalkingDeadS2_EP4_Bundle);
-        SpecificBundleNames.Add(WalkingDeadS2_EP5_Bundle);
-        SpecificBundleNames.Add(BorderlandsEP1_Bundle);
-        SpecificBundleNames.Add(BorderlandsEP2_Bundle);
-        SpecificBundleNames.Add(BorderlandsEP3_Bundle);
-        SpecificBundleNames.Add(BorderlandsEP4_Bundle);
-        SpecificBundleNames.Add(BorderlandsEP5_Bundle);
-
-        for j := 0 to SpecificBundleNames.Count - 1 do
-        begin
-          for I := 0 to BundleList.Count - 1 do
-          begin
-            if Uppercase( ExtractFileExt( BundleList.Strings[i] )) <> '.TTARCH2' then continue;
-
-            if UpperCase(BundleList.Strings[i]) = UpperCase(SpecificBundleNames[j]) then
-            begin
-              result := BundleList.Strings[i];
-              exit;
-            end;
-          end;
-        end;
-      finally
-        SpecificBundleNames.Free;
-      end;
-    end;
-
   finally
     BundleList.Free;
   end;
@@ -385,7 +348,6 @@ begin
     if Assigned(FOnProgress) then FOnProgress(fSourceFiles.Count -1, i);
   end;
 end;
-
 
 function TTelltaleMusicDumper.CopyBundledFiles: integer;
 var
@@ -634,9 +596,6 @@ end;
 
 function TTelltaleMusicDumper.SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
 var
-//  TempInt: Integer;
-//  buffer: TBuffer;
-//  tmpMpegHeader: TMpegHeader;
   Header: string;
   DestStream: TFileStream;
 begin
@@ -665,54 +624,6 @@ begin
   finally
     DestStream.Free;
   end;
-
-//  SourceStream.Position := 0;
-//
-//  if SourceStream.ReadDWord <> 876761926 then //'FSB4'
-//  begin
-//    //ShowMessage( 'Not a FSB4 header! on file ' + ExtractFileName(DestFile));
-//    Exit;
-//  end;
-//
-//  TempInt := SourceStream.ReadDWord;
-//  if TempInt <> 1 then //Number of samples
-//  begin
-//    raise EMusicDumpError.Create( strMoreThanOneFSB + inttostr(TempInt) + ' on file ' + ExtractFileName(DestFile));
-//    Exit;
-//  end;
-//
-//  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
-//  try
-//    DestStream.Position := 0;
-//
-//    TempInt := SourceStream.ReadDWord; //Size of sample header
-//    SourceStream.Seek(36 + TempInt, soFromCurrent); //Puts it at start of sample data
-//
-//
-//    //Now parse the MP3
-//    while SourceStream.Position < SourceStream.Size do
-//    begin
-//      setlength(buffer, 4);
-//      TempInt := SourceStream.Read(buffer[0], 4);  //Bytes read
-//      if TempInt < 4 then exit;
-//
-//      tmpMpegHeader := GetValidatedHeader(buffer, 0);
-//      if tmpMpegHeader.valid then
-//      begin
-//        SourceStream.Seek( -4, soFromCurrent);
-//        if tmpMpegHeader.framelength + SourceStream.Position > SourceStream.Size then
-//          exit //Bad frame at the end, dont copy it
-//        else
-//          DestStream.CopyFrom(SourceStream, tmpMpegHeader.framelength);
-//      end
-//      else
-//        SourceStream.Position := SourceStream.Position -3;
-//    end;
-//
-//   finally
-//    Result := true;
-//    DestStream.Free;
-//  end;
 end;
 
 function ShouldDownmixChannels(Channels, Frame: integer): boolean;

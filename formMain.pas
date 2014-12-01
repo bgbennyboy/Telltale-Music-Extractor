@@ -6,19 +6,9 @@
 ******************************************************
 }
 {
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 }
 
 unit formMain;
@@ -27,9 +17,9 @@ interface
 
 uses
   Windows, Menus, Forms, ImgList, Controls, Dialogs, ExtCtrls,
-  ComCtrls, StdCtrls, Classes, SysUtils, ShellApi,
+  ComCtrls, StdCtrls, Classes, SysUtils, ShellApi, TypInfo, System.UITypes,
 
-  JvBaseDlg, JvBrowseFolder, JCLSysInfo,
+  JvBaseDlg, JvBrowseFolder, JCLSysInfo, JCLStrings,
 
   uTelltaleFuncs, uTelltaleMusicExtractorConst, uTelltaleMusicDumper,
   uSoundTrackManager;
@@ -40,97 +30,97 @@ type
     EditSourcePath: TLabeledEdit;
     dlgBrowseForFolder: TJvBrowseForFolderDialog;
     PopupMenuOpen: TPopupMenu;
-    MenuItemOpenFolder: TMenuItem;
+    MenuOpenFolder: TMenuItem;
     N2: TMenuItem;
     Bone1: TMenuItem;
-    MenuItemOpenBone1: TMenuItem;
-    MenuItemOpenBone2: TMenuItem;
+    Menu_Bone_Boneville: TMenuItem;
+    Menu_Bone_CowRace: TMenuItem;
     CrimeSceneInvestigation1: TMenuItem;
-    MenuItemOpenCSI: TMenuItem;
-    MenuItemOpenCSIHardEvidence: TMenuItem;
+    Menu_CSI_3Dimensions: TMenuItem;
+    Menu_CSI_HardEvidence: TMenuItem;
     SamAndMaxSeason11: TMenuItem;
-    MenuItemOpenCultureShock: TMenuItem;
-    MenuItemOpenSituationComedy: TMenuItem;
-    MenuItemOpenMoleMobMeatball: TMenuItem;
-    MenuItemOpenAbeLincoln: TMenuItem;
-    MenuItemOpenReality20: TMenuItem;
-    MenuItemOpenBrightSideOfTheMoon: TMenuItem;
+    Menu_SamAndMax_CultureShock: TMenuItem;
+    Menu_SamAndMax_SituationComedy: TMenuItem;
+    Menu_SamAndMax_MoleMobMeatball: TMenuItem;
+    Menu_SamAndMax_AbeLincoln: TMenuItem;
+    Menu_SamAndMax_Reality20: TMenuItem;
+    Menu_SamAndMax_BrightSideMoon: TMenuItem;
     SamAndMaxSeason21: TMenuItem;
-    MenuItemOpenIceStationSanta: TMenuItem;
-    MenuItemOpenMoaiBetterBlues: TMenuItem;
-    MenuItemOpenNightOfTheRavingDead: TMenuItem;
-    MenuItemOpenChariotsoftheDogs: TMenuItem;
-    MenuItemOpenWhatsNewBeelzebub: TMenuItem;
+    Menu_SamAndMax_IceStationSanta: TMenuItem;
+    Menu_SamAndMax_MoaiBetterBlues: TMenuItem;
+    Menu_SamAndMax_NightOfTheRavingDead: TMenuItem;
+    Menu_SamAndMax_ChariotsOfTheDogs: TMenuItem;
+    Menu_SamAndMax_WhatsNewBeelzebub: TMenuItem;
     StrongBadSeason11: TMenuItem;
-    MenuItemOpenStrongBadEP1: TMenuItem;
-    MenuItemOpenStrongBadEP2: TMenuItem;
-    MenuItemOpenStrongBadEP3: TMenuItem;
-    MenuItemOpenStrongBadEP4: TMenuItem;
-    MenuItemOpenStrongBadEP5: TMenuItem;
-    MenuItemOpenTexas: TMenuItem;
+    Menu_StrongBad_HomestarRuiner: TMenuItem;
+    Menu_StrongBad_StrongBadiaTheFree: TMenuItem;
+    Menu_StrongBad_BaddestOfTheBands: TMenuItem;
+    Menu_StrongBad_Daneresque3: TMenuItem;
+    Menu_StrongBad_8BitIsEnough: TMenuItem;
+    Menu_Texas_Holdem: TMenuItem;
     WallaceandGromitsGrandAdventures1: TMenuItem;
-    MenuItemOpenWallaceEP4: TMenuItem;
-    MenuItemOpenWallaceEP3: TMenuItem;
-    MenuItemOpenWallaceEP2: TMenuItem;
-    MenuItemOpenWallaceEP1: TMenuItem;
+    Menu_WallaceAndGromit_TheBogeyMan: TMenuItem;
+    Menu_WallaceAndGromit_Muzzled: TMenuItem;
+    Menu_WallaceAndGromit_TheLastResort: TMenuItem;
+    Menu_WallaceAndGromit_FrightOfTheBumblebees: TMenuItem;
     TalesOfMonkeyIsland1: TMenuItem;
-    MenuItemOpenMonkeyEP1: TMenuItem;
-    MenuItemOpenMonkeyEP2: TMenuItem;
-    MenuItemOpenMonkeyEP3: TMenuItem;
-    MenuItemOpenMonkeyEP4: TMenuItem;
-    MenuItemOpenMonkeyEP5: TMenuItem;
-    MenuItemOpenCSIDeadlyIntent: TMenuItem;
+    Menu_Monkey_ScreamingNarwhal: TMenuItem;
+    Menu_Monkey_SpinnerCay: TMenuItem;
+    Menu_Monkey_LairLeviathan: TMenuItem;
+    Menu_Monkey_TrialExecution: TMenuItem;
+    Menu_Monkey_PirateGod: TMenuItem;
+    Menu_CSI_DeadlyIntent: TMenuItem;
     SamAndMaxSeason31: TMenuItem;
-    MenuItemOpenSamAndMax305: TMenuItem;
-    MenuItemOpenSamAndMax304: TMenuItem;
-    MenuItemOpenSamAndMax303: TMenuItem;
-    MenuItemOpenSamAndMax302: TMenuItem;
-    MenuItemOpenSamAndMax301: TMenuItem;
+    Menu_SamAndMax_CityThatDaresNotSleep: TMenuItem;
+    Menu_SamAndMax_BeyondAlleyOfDolls: TMenuItem;
+    Menu_SamAndMax_TheyStoleMaxsBrain: TMenuItem;
+    Menu_SamAndMax_TombOfSammunMak: TMenuItem;
+    Menu_SamAndMax_PenalZone: TMenuItem;
     PuzzleAgent1: TMenuItem;
-    MenuItemOpenPuzzleAgent101: TMenuItem;
-    MenuItemOpenCSIFatalConspiracy: TMenuItem;
-    MenuItemOpenPokerInventory: TMenuItem;
+    Menu_PuzzleAgent_Scoggins: TMenuItem;
+    Menu_CSI_FatalConspiracy: TMenuItem;
+    Menu_PokerNight_Inventory: TMenuItem;
     BackToTheFuture2: TMenuItem;
-    MenuItemOpenBTTF5: TMenuItem;
-    MenuItemOpenBTTF4: TMenuItem;
-    MenuItemOpenBTTF3: TMenuItem;
-    MenuItemOpenBTTF2: TMenuItem;
-    MenuItemOpenBTTF1: TMenuItem;
+    Menu_BackToTheFuture_OutaTime: TMenuItem;
+    Menu_BackToTheFuture_DoubleVisions: TMenuItem;
+    Menu_BackToTheFuture_CitizenBrown: TMenuItem;
+    Menu_BackToTheFuture_GetTannen: TMenuItem;
+    Menu_BackToTheFuture_ItsAboutTime: TMenuItem;
     HectorBadgeOfCarnage1: TMenuItem;
-    MenuItemOpenHector101: TMenuItem;
-    MenuItemOpenPuzzleAgent102: TMenuItem;
-    MenuItemOpenHector102: TMenuItem;
-    MenuItemOpenHector103: TMenuItem;
+    Menu_Hector_WeNegotiateWithTerrorists: TMenuItem;
+    Menu_PuzzleAgent_2: TMenuItem;
+    Menu_Hector_SenselessActsOfJustice: TMenuItem;
+    Menu_Hector_BeyondReasonableDoom: TMenuItem;
     JurassicParkTheGame: TMenuItem;
-    MenuItemOpenJurassicParkEP4: TMenuItem;
-    MenuItemOpenJurassicParkEP3: TMenuItem;
-    MenuItemOpenJurassicParkEP2: TMenuItem;
-    MenuItemOpenJurassicParkEP1: TMenuItem;
+    Menu_JurassicPark_EP4: TMenuItem;
+    Menu_JurassicPark_EP3: TMenuItem;
+    Menu_JurassicPark_EP2: TMenuItem;
+    Menu_JurassicPark_EP1: TMenuItem;
     heWalkingDead1: TMenuItem;
-    MenuItemOpenWalkingDeadEP1: TMenuItem;
-    MenuItemOpenLawAndOrderLegacies: TMenuItem;
-    MenuItemOpenWalkingDeadEP2: TMenuItem;
-    MenuItemOpenWalkingDeadEP3: TMenuItem;
-    MenuItemOpenWalkingDeadEP4: TMenuItem;
-    MenuItemOpenWalkingDeadEP5: TMenuItem;
+    Menu_WalkingDead_ANewDay: TMenuItem;
+    Menu_LawAndOrder_Legacies: TMenuItem;
+    Menu_WalkingDead_StarvedForHelp: TMenuItem;
+    Menu_WalkingDead_LongRoadAhead: TMenuItem;
+    Menu_WalkingDead_AroundEveryCorner: TMenuItem;
+    Menu_WalkingDead_NoTimeLeft: TMenuItem;
     MenuPoker: TMenuItem;
-    MenuItemOpenPoker2: TMenuItem;
+    Menu_PokerNight_2: TMenuItem;
     TheWolfAmongUs1: TMenuItem;
-    MenuItemOpenWolfAmongUs1: TMenuItem;
+    Menu_WolfAmongUs_Faith: TMenuItem;
     SeasonOne1: TMenuItem;
     SeasonTwo1: TMenuItem;
-    MenuItemOpenWalkingDeadEP6: TMenuItem;
-    MenuItemOpenWalkingDead_S2_E1: TMenuItem;
-    MenuItemOpenWalkingDead_S2_E2: TMenuItem;
-    MenuItemOpenWalkingDead_S2_E3: TMenuItem;
-    MenuItemOpenWalkingDead_S2_E4: TMenuItem;
-    MenuItemOpenWalkingDead_S2_E5: TMenuItem;
-    MenuItemOpenWolfAmongUs2: TMenuItem;
-    MenuItemOpenWolfAmongUs3: TMenuItem;
-    MenuItemOpenWolfAmongUs4: TMenuItem;
-    MenuItemOpenWolfAmongUs5: TMenuItem;
+    Menu_WalkingDead_400Days: TMenuItem;
+    Menu_WalkingDead_S2_AllThatRemains: TMenuItem;
+    Menu_WalkingDead_S2_AHouseDivided: TMenuItem;
+    Menu_WalkingDead_S2_InHarmsWay: TMenuItem;
+    Menu_WalkingDead_S2_AmidTheRuins: TMenuItem;
+    Menu_WalkingDead_S2_NoGoingBack: TMenuItem;
+    Menu_WolfAmongUs_SmokeAndMirrors: TMenuItem;
+    Menu_WolfAmongUs_ACrookedMile: TMenuItem;
+    Menu_WolfAmongUs_InSheepsClothing: TMenuItem;
+    Menu_WolfAmongUs_CryWolf: TMenuItem;
     ImageListSmall: TImageList;
-    FileOpenDialog1: TFileOpenDialog;
+    FileOpenDialogFolder: TFileOpenDialog;
     btnChooseSource: TButton;
     btnChooseDest: TButton;
     btnGo: TButton;
@@ -139,14 +129,16 @@ type
     lblSupportTelltaleLink: TLinkLabel;
     lblByAuthorLink: TLinkLabel;
     TalesFromTheBorderlands1: TMenuItem;
-    MenuItemOpenTalesFromBorderlands1: TMenuItem;
-    MenuItemOpenTalesFromBorderlands2: TMenuItem;
-    MenuItemOpenTalesFromBorderlands3: TMenuItem;
-    MenuItemOpenTalesFromBorderlands4: TMenuItem;
-    MenuItemOpenTalesFromBorderlands5: TMenuItem;
+    Menu_TalesFromBorderlands_Zer0Sum: TMenuItem;
+    Menu_TalesFromBorderlands_AtlasMugged: TMenuItem;
+    Menu_TalesFromBorderlands_CatchARide: TMenuItem;
+    Menu_TalesFromBorderlands_EscapePlanBravo: TMenuItem;
+    Menu_TalesFromBorderlands_TheVaultOfTheTraveler: TMenuItem;
+    MenuOpenFile: TMenuItem;
+    OpenDialogFile: TOpenDialog;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
-    procedure MenuItemOpenFolderClick(Sender: TObject);
+    procedure MenuOpenFolderClick(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnChooseSourceClick(Sender: TObject);
     procedure btnChooseDestClick(Sender: TObject);
@@ -201,7 +193,6 @@ begin
   lblByAuthorLink.Caption := strAuthorLink
 end;
 
-{*****************************Popup Menu Handlers*****************************}
 procedure TfrmMain.OnProgress(ProgressMax, ProgressPos: integer);
 begin
   Progressbar1.Max := ProgressMax;
@@ -212,424 +203,74 @@ procedure TfrmMain.OpenPopupMenuHandler(Sender: TObject);
 var
   SenderName, strFolder: string;
 begin
-  SenderName := tmenuitem(sender).Name;
+  SenderName := TMenuItem(Sender).Name;
   fChosenGame := UnknownGame; //Only need to know the game for latest games
 
-  if SenderName = 'MenuItemOpenFolder' then
+  if SenderName = 'MenuOpenFile' then
+  begin
+    if OpenDialogFile.Execute = false then exit;
+    EditSourcePath.Text := OpenDialogFile.FileName;
+    EditSourcePath.EditLabel.Caption := 'Source file:';
+    Exit;
+  end
+  else
+  if SenderName = 'MenuOpenFolder' then
     strFolder:=''
   else
-  if SenderName = 'MenuItemOpenBone1' then
-  begin
-    strFolder:=GetTelltaleGamePath(Bone_Boneville);
-  end
-  else
-  if SenderName = 'MenuItemOpenBone2' then
-  begin
-    strFolder:=GetTelltaleGamePath(Bone_CowRace);
-  end
-  else
-  if SenderName = 'MenuItemOpenCSI' then
-  begin
-    strFolder:=GetTelltaleGamePath(CSI_3Dimensions, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenCSIHardEvidence' then
-  begin
-    strFolder:=GetTelltaleGamePath(CSI_HardEvidence, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenCSIDeadlyIntent' then
+  if SenderName = 'Menu_CSI_DeadlyIntent' then
   begin
     strFolder:=GetTelltaleGamePath(CSI_DeadlyIntent);
 
     dlgBrowseForFolder.Directory := strFolder;
-    FileOpenDialog1.DefaultFolder := strFolder;
+    FileOpenDialogFolder.DefaultFolder := strFolder;
 
-    ShowMessage(strCSIDeadlyIntent);
+    MessageDlg(strCSIDeadlyIntent, mtInformation, [mbOk], 0);
   end
   else
-  if SenderName = 'MenuItemOpenCultureShock' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_CultureShock);
-  end
-  else
-  if SenderName = 'MenuItemOpenSituationComedy' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_SituationComedy);
-  end
-  else
-  if SenderName = 'MenuItemOpenMoleMobMeatball' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_MoleMobMeatball);
-  end
-  else
-  if SenderName = 'MenuItemOpenAbeLincoln' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_AbeLincoln);
-  end
-  else
-  if SenderName = 'MenuItemOpenReality20' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_Reality20);
-  end
-  else
-  if SenderName = 'MenuItemOpenBrightSideOfTheMoon' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_BrightSideMoon);
-  end
-  else
-  if SenderName = 'MenuItemOpenIceStationSanta' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_IceStationSanta, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenMoaiBetterBlues' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_MoaiBetterBlues, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenNightOfTheRavingDead' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_NightOfTheRavingDead, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenChariotsoftheDogs' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_ChariotsOfTheDogs, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenWhatsNewBeelzebub' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_WhatsNewBeelzebub, Music);
-  end
-  else
-  if SenderName = 'MenuItemOpenStrongBadEP1' then
-  begin
-    strFolder:=GetTelltaleGamePath(StrongBad_HomestarRuiner);
-  end
-  else
-  if SenderName = 'MenuItemOpenStrongBadEP2' then
-  begin
-    strFolder:=GetTelltaleGamePath(StrongBad_StrongBadiaTheFree);
-  end
-  else
-  if SenderName = 'MenuItemOpenStrongBadEP3' then
-  begin
-    strFolder:=GetTelltaleGamePath(StrongBad_BaddestOfTheBands);
-  end
-  else
-  if SenderName = 'MenuItemOpenStrongBadEP4' then
-  begin
-    strFolder:=GetTelltaleGamePath(StrongBad_Daneresque3);
-  end
-  else
-  if SenderName = 'MenuItemOpenStrongBadEP5' then
-  begin
-    strFolder:=GetTelltaleGamePath(StrongBad_8BitIsEnough);
-  end
-  else
-  if SenderName = 'MenuItemOpenTexas' then
-  begin
-    strFolder:=GetTelltaleGamePath(Texas_Holdem);
-  end
-  else
-  if SenderName = 'MenuItemOpenWallaceEP1' then
-  begin
-    strFolder:=GetTelltaleGamePath(WallaceAndGromit_FrightOfTheBumblebees);
-  end
-  else
-  if SenderName = 'MenuItemOpenWallaceEP2' then
-  begin
-    strFolder:=GetTelltaleGamePath(WallaceAndGromit_TheLastResort);
-  end
-  else
-  if SenderName = 'MenuItemOpenWallaceEP3' then
-  begin
-    strFolder:=GetTelltaleGamePath(WallaceAndGromit_Muzzled);
-  end
-  else
-  if SenderName = 'MenuItemOpenWallaceEP4' then
-  begin
-    strFolder:=GetTelltaleGamePath(WallaceAndGromit_TheBogeyMan);
-  end
-  else
-  if SenderName = 'MenuItemOpenMonkeyEP1' then
-  begin
-    strFolder:=GetTelltaleGamePath(Monkey_ScreamingNarwhal);
-  end
-  else
-  if SenderName = 'MenuItemOpenMonkeyEP2' then
-  begin
-    strFolder:=GetTelltaleGamePath(Monkey_SpinnerCay);
-  end
-  else
-  if SenderName = 'MenuItemOpenMonkeyEP3' then
-  begin
-    strFolder:=GetTelltaleGamePath(Monkey_LairLeviathan);
-  end
-  else
-  if SenderName = 'MenuItemOpenMonkeyEP4' then
-  begin
-    strFolder:=GetTelltaleGamePath(Monkey_TrialExecution);
-  end
-  else
-  if SenderName = 'MenuItemOpenMonkeyEP5' then
-  begin
-    strFolder:=GetTelltaleGamePath(Monkey_PirateGod);
-  end
-  else
-  if SenderName = 'MenuItemOpenSamAndMax301' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_PenalZone);
-  end
-  else
-  if SenderName = 'MenuItemOpenSamAndMax302' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_TombOfSammunMak);
-  end
-  else
-  if SenderName = 'MenuItemOpenSamAndMax303' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_TheyStoleMaxsBrain);
-  end
-  else
-  if SenderName = 'MenuItemOpenSamAndMax304' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_BeyondAlleyOfDolls);
-  end
-  else
-  if SenderName = 'MenuItemOpenSamAndMax305' then
-  begin
-    strFolder:=GetTelltaleGamePath(SamAndMax_CityThatDaresNotSleep);
-  end
-  else
-  if SenderName = 'MenuItemOpenPuzzleAgent101' then
-  begin
-    strFolder:=GetTelltaleGamePath(PuzzleAgent_Scoggins);
-  end
-  else
-  if SenderName = 'MenuItemOpenPuzzleAgent102' then
-  begin
-    strFolder:=GetTelltaleGamePath(PuzzleAgent_2);
-  end
-  else
-  if SenderName = 'MenuItemOpenCSIFatalConspiracy' then
+  if SenderName = 'Menu_CSI_FatalConspiracy' then
   begin
     strFolder:=GetTelltaleGamePath(CSI_FatalConspiracy);
 
     dlgBrowseForFolder.Directory := strFolder;
-    FileOpenDialog1.DefaultFolder := strFolder;
+    FileOpenDialogFolder.DefaultFolder := strFolder;
 
-    ShowMessage(strCSIFatalConspiracy);
+    MessageDlg(strCSIFatalConspiracy, mtInformation, [mbOk], 0);
   end
   else
-  if SenderName = 'MenuItemOpenPokerInventory' then
   begin
-    strFolder:=GetTelltaleGamePath(PokerNight_Inventory);
-  end
-  else
-  if SenderName = 'MenuItemOpenPoker2' then
-  begin
-    strFolder:=GetTelltaleGamePath(PokerNight_2);
-  end
-  else
-  if SenderName = 'MenuItemOpenBTTF1' then
-  begin
-    strFolder:=GetTelltaleGamePath(BackToTheFuture_ItsAboutTime);
-  end
-  else
-  if SenderName = 'MenuItemOpenBTTF2' then
-  begin
-    strFolder:=GetTelltaleGamePath(BackToTheFuture_GetTannen);
-  end
-  else
-  if SenderName = 'MenuItemOpenBTTF3' then
-  begin
-    strFolder:=GetTelltaleGamePath(BackToTheFuture_CitizenBrown);
-  end
-  else
-  if SenderName = 'MenuItemOpenBTTF4' then
-  begin
-    strFolder:=GetTelltaleGamePath(BackToTheFuture_DoubleVisions);
-  end
-  else
-  if SenderName = 'MenuItemOpenBTTF5' then
-  begin
-    strFolder:=GetTelltaleGamePath(BackToTheFuture_OutaTime);
-  end
-  else
-  if SenderName = 'MenuItemOpenHector101' then
-  begin
-    strFolder:=GetTelltaleGamePath(Hector_WeNegotiateWithTerrorists);
-  end
-  else
-  if SenderName = 'MenuItemOpenHector102' then
-  begin
-    strFolder:=GetTelltaleGamePath(Hector_SenselessActsOfJustice);
-  end
-  else
-  if SenderName = 'MenuItemOpenHector103' then
-  begin
-    strFolder:=GetTelltaleGamePath(Hector_BeyondReasonableDoom);
-  end
-  else
-  if SenderName = 'MenuItemOpenJurassicParkEP1' then
-  begin
-    strFolder:=GetTelltaleGamePath(JurassicPark_EP1);
-  end
-  else
-  if SenderName = 'MenuItemOpenJurassicParkEP2' then
-  begin
-    strFolder:=GetTelltaleGamePath(JurassicPark_EP2);
-  end
-  else
-  if SenderName = 'MenuItemOpenJurassicParkEP3' then
-  begin
-    strFolder:=GetTelltaleGamePath(JurassicPark_EP3);
-  end
-  else
-  if SenderName = 'MenuItemOpenJurassicParkEP4' then
-  begin
-    strFolder:=GetTelltaleGamePath(JurassicPark_EP4);
-  end
-  else
-  if SenderName = 'MenuItemOpenLawAndOrderLegacies' then
-  begin
-    strFolder:=GetTelltaleGamePath(LawAndOrder_Legacies);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDeadEP1' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_ANewDay);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDeadEP2' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_StarvedForHelp);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDeadEP3' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_LongRoadAhead);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDeadEP4' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_AroundEveryCorner);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDeadEP5' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_NoTimeLeft);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDeadEP6' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_400Days);
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDead_S2_E1' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_S2_AllThatRemains);
-    fChosenGame := WalkingDead_S2_AllThatRemains;
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDead_S2_E2' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_S2_AHouseDivided);
-    fChosenGame := WalkingDead_S2_AHouseDivided;
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDead_S2_E3' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_S2_InHarmsWay);
-    fChosenGame := WalkingDead_S2_InHarmsWay;
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDead_S2_E4' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_S2_AmidTheRuins);
-    fChosenGame := WalkingDead_S2_AmidTheRuins;
-  end
-  else
-  if SenderName = 'MenuItemOpenWalkingDead_S2_E5' then
-  begin
-    strFolder:=GetTelltaleGamePath(WalkingDead_S2_NoGoingBack);
-    fChosenGame := WalkingDead_S2_NoGoingBack;
-  end
-  else
-  if SenderName = 'MenuItemOpenWolfAmongUs1' then
-  begin
-    strFolder:=GetTelltaleGamePath(WolfAmongUs_Faith);
-    fChosenGame := WolfAmongUs_Faith;
-  end
-  else
-  if SenderName = 'MenuItemOpenWolfAmongUs2' then
-  begin
-    strFolder:=GetTelltaleGamePath(WolfAmongUs_SmokeAndMirrors);
-    fChosenGame := WolfAmongUs_SmokeAndMirrors;
-  end
-  else
-  if SenderName = 'MenuItemOpenWolfAmongUs3' then
-  begin
-    strFolder:=GetTelltaleGamePath(WolfAmongUs_ACrookedMile);
-    fChosenGame := WolfAmongUs_ACrookedMile;
-  end
-  else
-  if SenderName = 'MenuItemOpenWolfAmongUs4' then
-  begin
-    strFolder:=GetTelltaleGamePath(WolfAmongUs_InSheepsClothing);
-    fChosenGame := WolfAmongUs_InSheepsClothing;
-  end
-  else
-  if SenderName = 'MenuItemOpenWolfAmongUs5' then
-  begin
-    strFolder:=GetTelltaleGamePath(WolfAmongUs_CryWolf);
-    fChosenGame := WolfAmongUs_CryWolf;
-  end
-  else
-  if SenderName = 'MenuItemOpenTalesFromBorderlands1' then
-  begin
-    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_Zer0Sum);
-    fChosenGame := TalesFromBorderlands_Zer0Sum;
-  end
-  else
-  if SenderName = 'MenuItemOpenTalesFromBorderlands2' then
-  begin
-    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_AtlasMugged);
-    fChosenGame := TalesFromBorderlands_AtlasMugged;
-  end
-  else
-  if SenderName = 'MenuItemOpenTalesFromBorderlands3' then
-  begin
-    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_CatchARide);
-    fChosenGame := TalesFromBorderlands_CatchARide;
-  end
-  else
-  if SenderName = 'MenuItemOpenTalesFromBorderlands4' then
-  begin
-    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_EscapePlanBravo);
-    fChosenGame := TalesFromBorderlands_EscapePlanBravo;
-  end
-  else
-  if SenderName = 'MenuItemOpenTalesFromBorderlands5' then
-  begin
-    strFolder:=GetTelltaleGamePath(TalesFromBorderlands_TheVaultOfTheTraveler);
-    fChosenGame := TalesFromBorderlands_TheVaultOfTheTraveler;
+    SenderName := strAfter('Menu_', SenderName);
+    if SenderName = '' then MessageDlg(strMissingMenu, mtError, [mbOk], 0);
+
+    //fChosenGame only really used by newest .ttartch2 games
+    fChosenGame := TTelltaleGame(GetEnumValue(TypeInfo(TTelltaleGame), SenderName));
+
+    //Games that need the music param for GetTelltaleGamePath
+    if (SenderName = 'CSI_3Dimensions') or
+       (SenderName = 'CSI_HardEvidence') or
+       (SenderName = 'SamAndMax_IceStationSanta') or
+       (SenderName = 'SamAndMax_MoaiBetterBlues') or
+       (SenderName = 'SamAndMax_NightOfTheRavingDead') or
+       (SenderName = 'SamAndMax_ChariotsOfTheDogs') or
+       (SenderName = 'SamAndMax_WhatsNewBeelzebub')
+    then
+      strFolder:=GetTelltaleGamePath(fChosenGame, Music)
+    else
+      strFolder:=GetTelltaleGamePath(fChosenGame);
+
   end;
 
-  if directoryexists(strFolder) = false then
+  EditSourcePath.EditLabel.Caption := 'Source folder:';
+
+  if DirectoryExists(strFolder) = false then
   begin
-    ShowMessage(strGameNotFound);
+    MessageDlg(strGameNotFound, mtError, [mbOk], 0);
     EditSourcePath.Text:='';
   end
   else
     EditSourcePath.Text:=strFolder;
-
 end;
 
-
-procedure TfrmMain.MenuItemOpenFolderClick(Sender: TObject);
+procedure TfrmMain.MenuOpenFolderClick(Sender: TObject);
 begin
   OpenFolder;
 end;
@@ -644,9 +285,9 @@ procedure TfrmMain.OpenFolder;
 begin
   if Win32MajorVersion >= 6 then //Vista and above
   begin
-    FileOpenDialog1.Title := strOpenDialogTitle;
-    if FileOpenDialog1.Execute then
-      editSourcePath.Text := FileOpenDialog1.FileName;
+    FileOpenDialogFolder.Title := strOpenDialogTitle;
+    if FileOpenDialogFolder.Execute then
+      editSourcePath.Text := FileOpenDialogFolder.FileName;
   end
   else
   begin
@@ -671,9 +312,9 @@ procedure TfrmMain.btnChooseDestClick(Sender: TObject);
 begin
   if Win32MajorVersion >= 6 then //Vista and above
   begin
-    FileOpenDialog1.Title := strSaveDialogTitle;
-    if FileOpenDialog1.Execute then
-      editDestPath.Text := FileOpenDialog1.FileName;
+    FileOpenDialogFolder.Title := strSaveDialogTitle;
+    if FileOpenDialogFolder.Execute then
+      editDestPath.Text := FileOpenDialogFolder.FileName;
   end
   else
   begin
@@ -693,11 +334,15 @@ begin
 
   if DirectoryExists(EditDestPath.Text)=false then
   begin
-    ShowMessage(strInvalidFolder);
+    MessageDlg(strInvalidFolder, mtError, [mbOk], 0);
     exit;
   end;
 
-  fMusicDumper := TTelltaleMusicDumper.Create(EditSourcePath.Text, EditDestPath.Text, fChosenGame);
+  if FileExists(EditSourcePath.Text) then //single file open
+    fMusicDumper := TTelltaleMusicDumper.Create( EditDestPath.Text, fChosenGame, EditSourcePath.Text)
+  else //folder open
+    fMusicDumper := TTelltaleMusicDumper.Create(EditSourcePath.Text, EditDestPath.Text, fChosenGame);
+
   try
     try
       EnableControls(false);
@@ -737,7 +382,7 @@ begin
     end;
   except on E: EMusicDumpError do
     begin
-      ShowMessage(E.Message);
+      MessageDlg(E.Message, mtError, [mbOk], 0);
       EnableControls(true);
       Progressbar1.Position:=0;
     end;
@@ -746,9 +391,9 @@ begin
 
 
   if CopyCount = 0 then
-    ShowMessage(strNoFilesCreated)
+    MessageDlg(strNoFilesCreated, mtError, [mbOk], 0)
   else
-    ShowMessage(strAllDone + inttostr(CopyCount) + strXFilesCreated);
+    MessageDlg(strAllDone + inttostr(CopyCount) + strXFilesCreated, mtInformation, [mbOk], 0);
 end;
 
 end.

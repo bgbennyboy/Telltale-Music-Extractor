@@ -6,19 +6,9 @@
 ******************************************************
 }
 {
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 }
 
 unit uTelltaleMusicExtractorConst;
@@ -39,13 +29,13 @@ const
                                   + #13#13 +
                                   'For example, select the CSI601 folder to dump the music from the first part.';
 
-  strCSIDeadlyIntent:    string = 'CSI Deadly Inent has the music for each of its 5 parts stored in separate folders. ' +
+  strCSIDeadlyIntent:    string = 'CSI Deadly Intent has the music for each of its 5 parts stored in separate folders. ' +
                                   'You''ll need to dump the music from each part manually.' + #13#13 +
                                   'To do this click "Open Folder", scroll down to the "Pack" folder, select one of the CSI5 folders and click the "Go" button.'
                                   + #13#13 +
                                   'For example, select the CSI501 folder to dump the music from the first part.';
   strInvalidFolder:   string = 'Invalid destination folder. Check the destination path';
-  strNoFilesCreated:  string = 'No files created! An error occured';
+  strNoFilesCreated:  string = 'No music files were created!';
   strNoMusicFound:    string = 'No music files found! Check the source folder path!' + #13#13 + 'Choose a folder with .aud .ttarch  or .ttarch2 files.';
   strMoreThanOneFSB:  string = 'Not just 1 sample in FSB! ';
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
@@ -57,6 +47,12 @@ const
   strSaveDialogTitle: string =  'Select a destination folder for the music';
   strAllDone:         string = 'All done! ';
   strXFilesCreated:   string = ' files created.';
+  strMissingMenu:     string =  'Menu missing for game! Report this.';
+  strMultipleMusicBundles: string = 'Error - couldn''t automatically find the music bundle.' + #13#13 +
+                                    'It is likely that this folder contains the music for multiple episodes of a game.' + #13#13 +
+                                    'There are two possible solutions to this:' + #13#13 +
+                                    'Select an episode from the menu and the program will automatically find the files for that episode. Or...' + #13#13 +
+                                    'Choose "Open file" and select the exact file that you want to extract music from.';
 
 implementation
 
