@@ -136,6 +136,13 @@ type
     Menu_TalesFromBorderlands_TheVaultOfTheTraveler: TMenuItem;
     MenuOpenFile: TMenuItem;
     OpenDialogFile: TOpenDialog;
+    GameOfThrones1: TMenuItem;
+    Menu_GameOfThrones_TheIceDragon: TMenuItem;
+    Menu_GameOfThrones_ANestOfVipers: TMenuItem;
+    Menu_GameOfThrones_SonsOfWinter: TMenuItem;
+    Menu_GameOfThrones_TheSwordInTheDarkness: TMenuItem;
+    Menu_GameOfThrones_TheLostLords: TMenuItem;
+    Menu_GameOfThrones_IronFromIce: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuOpenFolderClick(Sender: TObject);

@@ -232,6 +232,12 @@ const
   BorderlandsEP3_Bundle = 'Borderlands_pc_Borderlands103_ms.ttarch2';
   BorderlandsEP4_Bundle = 'Borderlands_pc_Borderlands104_ms.ttarch2';
   BorderlandsEP5_Bundle = 'Borderlands_pc_Borderlands105_ms.ttarch2';
+  GameOfThronesEP1_Bundle = 'GameOfThrones_pc_GameOfThrones101_ms.ttarch2';
+  GameOfThronesEP2_Bundle = 'GameOfThrones_pc_GameOfThrones102_ms.ttarch2';
+  GameOfThronesEP3_Bundle = 'GameOfThrones_pc_GameOfThrones103_ms.ttarch2';
+  GameOfThronesEP4_Bundle = 'GameOfThrones_pc_GameOfThrones104_ms.ttarch2';
+  GameOfThronesEP5_Bundle = 'GameOfThrones_pc_GameOfThrones105_ms.ttarch2';
+  GameOfThronesEP6_Bundle = 'GameOfThrones_pc_GameOfThrones106_ms.ttarch2';
 var
   BundleList: TStringList;
   i: integer;
@@ -276,6 +282,12 @@ begin
       TalesFromBorderlands_CatchARide:            BundleFileName := BorderlandsEP3_Bundle;
       TalesFromBorderlands_EscapePlanBravo:       BundleFileName := BorderlandsEP4_Bundle;
       TalesFromBorderlands_TheVaultOfTheTraveler: BundleFileName := BorderlandsEP5_Bundle;
+      GameOfThrones_IronFromIce:                  BundleFileName := GameOfThronesEP1_Bundle;
+      GameOfThrones_TheLostLords:                 BundleFileName := GameOfThronesEP2_Bundle;
+      GameOfThrones_TheSwordInTheDarkness:        BundleFileName := GameOfThronesEP3_Bundle;
+      GameOfThrones_SonsOfWinter:                 BundleFileName := GameOfThronesEP4_Bundle;
+      GameOfThrones_ANestOfVipers:                BundleFileName := GameOfThronesEP5_Bundle;
+      GameOfThrones_TheIceDragon:                 BundleFileName := GameOfThronesEP6_Bundle;
     end;
 
     for I := 0 to BundleList.Count - 1 do

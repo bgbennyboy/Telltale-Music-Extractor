@@ -212,6 +212,40 @@ object frmMain: TfrmMain
         OnClick = OpenPopupMenuHandler
       end
     end
+    object GameOfThrones1: TMenuItem
+      Caption = 'Game Of Thrones'
+      ImageIndex = 16
+      object Menu_GameOfThrones_IronFromIce: TMenuItem
+        Caption = 'Iron From Ice'
+        ImageIndex = 16
+        OnClick = OpenPopupMenuHandler
+      end
+      object Menu_GameOfThrones_TheLostLords: TMenuItem
+        Caption = 'The Lost Lords'
+        ImageIndex = 16
+        OnClick = OpenPopupMenuHandler
+      end
+      object Menu_GameOfThrones_TheSwordInTheDarkness: TMenuItem
+        Caption = 'The Sword in the Darkness'
+        ImageIndex = 16
+        OnClick = OpenPopupMenuHandler
+      end
+      object Menu_GameOfThrones_SonsOfWinter: TMenuItem
+        Caption = 'Sons of Winter'
+        ImageIndex = 16
+        OnClick = OpenPopupMenuHandler
+      end
+      object Menu_GameOfThrones_ANestOfVipers: TMenuItem
+        Caption = 'A Nest of Vipers'
+        ImageIndex = 16
+        OnClick = OpenPopupMenuHandler
+      end
+      object Menu_GameOfThrones_TheIceDragon: TMenuItem
+        Caption = 'The Ice Dragon'
+        ImageIndex = 16
+        OnClick = OpenPopupMenuHandler
+      end
+    end
     object HectorBadgeOfCarnage1: TMenuItem
       Caption = 'Hector: Badge Of Carnage'
       ImageIndex = 10
