@@ -19,7 +19,7 @@ uses
   Windows, Menus, Forms, ImgList, Controls, Dialogs, ExtCtrls,
   ComCtrls, StdCtrls, Classes, SysUtils, ShellApi, TypInfo, System.UITypes,
 
-  JvBaseDlg, JvBrowseFolder, JCLSysInfo, JCLStrings, JCLFileUtils,
+  JvBaseDlg, JvBrowseFolder, JCLSysInfo, JCLStrings,
 
   uTelltaleFuncs, uTelltaleMusicExtractorConst, uTelltaleMusicDumper,
   uSoundTrackManager;
@@ -143,13 +143,6 @@ type
     Menu_GameOfThrones_TheSwordInTheDarkness: TMenuItem;
     Menu_GameOfThrones_TheLostLords: TMenuItem;
     Menu_GameOfThrones_IronFromIce: TMenuItem;
-    MinecraftStoryMode1: TMenuItem;
-    Menu_Minecraft_TheOrderoftheStone: TMenuItem;
-    Menu_Minecraft_AssemblyRequired: TMenuItem;
-    Menu_Minecraft_TheLastPlaceYouLook: TMenuItem;
-    Menu_Minecraft_ABlockAndAHardPlace: TMenuItem;
-    Menu_Minecraft_OrderUp: TMenuItem;
-    SamAndMax1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuOpenFolderClick(Sender: TObject);
@@ -174,6 +167,7 @@ var
 implementation
 
 {$R *.dfm}
+
 
 procedure TfrmMain.EnableControls(Value: boolean);
 begin
@@ -203,7 +197,7 @@ begin
   EditDestPath.Text:=GetDesktopDirectoryFolder;
   frmMain.Caption:=strProgName + ' ' + strProgVersion;
   lblSupportTelltaleLink.Caption := strSupportTelltaleLink;
-  lblByAuthorLink.Caption := strAuthorLink;
+  lblByAuthorLink.Caption := strAuthorLink
 end;
 
 procedure TfrmMain.OnProgress(ProgressMax, ProgressPos: integer);
@@ -296,10 +290,6 @@ end;
 
 procedure TfrmMain.OpenFolder;
 begin
-  //Reset fChosenGame here - possible for this to get set if someone chooses a
-  //game earlier and its path isnt found fChosenGame will still be set
-  fChosenGame := UnknownGame;
-
   if Win32MajorVersion >= 6 then //Vista and above
   begin
     FileOpenDialogFolder.Title := strOpenDialogTitle;

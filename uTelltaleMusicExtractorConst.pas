@@ -18,7 +18,7 @@ interface
 const
   strGameNotFound:       string = 'Couldnt find the game.' + #13 + #13 + 'Try clicking ''Open Folder'' and browse for the game manually.';
   strProgName:           string = 'Telltale Music Extractor';
-  strProgVersion:        string = '1.5.1.4';
+  strProgVersion:        string = '1.5.1.3';
   strProgURL:            string = 'http://quickandeasysoftware.net';
   strSoundTrackDir:      string = 'Soundtracks';
   strCommentTag:         string = 'Created with Telltale Music Extractor ';
@@ -48,7 +48,6 @@ const
   strAllDone:         string = 'All done! ';
   strXFilesCreated:   string = ' files created.';
   strMissingMenu:     string =  'Menu missing for game! Report this.';
-  strMasterBankDumpFail:   string = 'Error dumping FSB master bank files!';
   strMultipleMusicBundles: string = 'Error - couldn''t automatically find the music bundle.' + #13#13 +
                                     'It is likely that this folder contains the music for multiple episodes of a game.' + #13#13 +
                                     'There are two possible solutions to this:' + #13#13 +

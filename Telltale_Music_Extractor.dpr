@@ -14,15 +14,12 @@
 
 program Telltale_Music_Extractor;
 
-{$R *.dres}
-
 uses
   Forms,
   formMain in 'formMain.pas' {frmMain},
   uSoundtrackManager in 'uSoundtrackManager.pas',
   uTelltaleMusicDumper in 'uTelltaleMusicDumper.pas',
-  uTelltaleMusicExtractorConst in 'uTelltaleMusicExtractorConst.pas',
-  uTelltaleMusicExtractorFuncs in 'uTelltaleMusicExtractorFuncs.pas';
+  uTelltaleMusicExtractorConst in 'uTelltaleMusicExtractorConst.pas';
 
 {$R *.res}
   
