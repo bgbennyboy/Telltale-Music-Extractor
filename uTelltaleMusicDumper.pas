@@ -16,10 +16,10 @@ unit uTelltaleMusicDumper;
 interface
 
 uses
-  Classes, SysUtils, Forms,
-  JCLFileUtils,
+  Classes, SysUtils, Forms, Windows, Strutils,
+  JCLFileUtils, JCLShell,
   uTelltaleFuncs, uTtarchBundleManager, uTelltaleMemStream, uTelltaleTypes,
-  uTelltaleMusicExtractorConst,
+  uTelltaleMusicExtractorConst, uTelltaleMusicExtractorFuncs,
   uSoundtrackManager, uMPEGHeaderCheck, OggVorbisAndOpusTagLibrary;
 
 type
@@ -41,13 +41,12 @@ type
     fMusicType: TMusicType;
     fSourceDir: string;
     fDestDir:   string;
-    fSourceFiles: TStringList;
+    fSourceFiles, fMasterBankFiles: TStringList;
     fTtarchFilename: string;
     fOnProgress: TProgressEvent;
-
+    fFSBBankDumpExe, fFSBdll1,fFSBdll2: string;
     function FindMusicType(SearchDir: String): TMusicType;
     function FindMusicTtarchBundle(Dir: string; TheGame: TTelltaleGame): string;
-    procedure FindFilesInDirByExt(Path, FileExt: string; FileList: TStrings);
     procedure LoadTtarchBundle;
     procedure TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
     procedure SaveFixedMP3Stream(InStream, OutStream: TStream; FileSize, Channels: integer);
@@ -57,6 +56,7 @@ type
     function SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
     function ExtractFSB4(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
     function ExtractFSB5(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
+    function DumpFSBMasterBankFiles(SearchDir, DestDir: string): boolean;
   public
     constructor Create(SearchDir, DestDir: String; Game: TTelltaleGame); overload;
     constructor Create(DestDir: String; Game: TTelltaleGame; TtarchFile: string); overload;
@@ -66,6 +66,7 @@ type
     function GetListOfFilesInBundleWithoutExt(var FileList: TStringList): integer;
     property OnProgress: TProgressEvent read FOnProgress write FOnProgress;
   end;
+
 
 implementation
 
@@ -188,33 +189,6 @@ begin
     result := CopyUnbundledFiles;
 end;
 
-//Find files with a specific extension and add them to a string list
-procedure TTelltaleMusicDumper.FindFilesInDirByExt(Path, FileExt: string; FileList: TStrings);
-var
-  SR: TSearchRec;
-begin
-  if length(FileExt) > 1 then
-    if FileExt[1] <> '.' then
-      FileExt := '.' + FileExt;
-
-  if FindFirst(Path + '*.*', faAnyFile, SR) = 0 then
-  begin
-    repeat
-      begin
-        if sr.Attr and faDirectory = faDirectory then
-        else
-        if sr.Attr and faSysFile = faSysFile then
-        else
-        begin
-          if extractfileext(sr.Name)=FileExt then
-            filelist.Add(sr.Name);
-        end;
-      end;
-    until FindNext(SR) <> 0;
-    FindClose(SR);
-  end;
-end;
-
 function TTelltaleMusicDumper.FindMusicTtarchBundle(Dir: string; TheGame: TTelltaleGame): string;
 const
   WolfEP1_MusicBundle = 'Fables_pc_Fables101_ms.ttarch2';
@@ -238,6 +212,11 @@ const
   GameOfThronesEP4_Bundle = 'GameOfThrones_pc_GameOfThrones104_ms.ttarch2';
   GameOfThronesEP5_Bundle = 'GameOfThrones_pc_GameOfThrones105_ms.ttarch2';
   GameOfThronesEP6_Bundle = 'GameOfThrones_pc_GameOfThrones106_ms.ttarch2';
+  MinecraftEP1_Bundle     = 'MCSM_pc_Minecraft101_ms.ttarch2';
+  MinecraftEP2_Bundle     = 'MCSM_pc_Minecraft102_ms.ttarch2';
+  MinecraftEP3_Bundle     = 'MCSM_pc_Minecraft103_ms.ttarch2';
+  MinecraftEP4_Bundle     = 'MCSM_pc_Minecraft104_ms.ttarch2';
+  MinecraftEP5_Bundle     = 'MCSM_pc_Minecraft105_ms.ttarch2';
 var
   BundleList: TStringList;
   i: integer;
@@ -288,6 +267,11 @@ begin
       GameOfThrones_SonsOfWinter:                 BundleFileName := GameOfThronesEP4_Bundle;
       GameOfThrones_ANestOfVipers:                BundleFileName := GameOfThronesEP5_Bundle;
       GameOfThrones_TheIceDragon:                 BundleFileName := GameOfThronesEP6_Bundle;
+      Minecraft_TheOrderOfTheStone:               BundleFileName := MinecraftEP1_Bundle;
+      Minecraft_AssemblyRequired:                 BundleFileName := MinecraftEP2_Bundle;
+      Minecraft_TheLastPlaceYouLook:              BundleFileName := MinecraftEP3_Bundle;
+      Minecraft_ABlockAndAHardPlace:              BundleFileName := MinecraftEP4_Bundle;
+      Minecraft_OrderUp:                          BundleFileName := MinecraftEP5_Bundle;
     end;
 
     for I := 0 to BundleList.Count - 1 do
@@ -361,12 +345,100 @@ begin
   end;
 end;
 
+function TTelltaleMusicDumper.DumpFSBMasterBankFiles(SearchDir,
+  DestDir: string): boolean;
+var
+  BundleList: TStringList;
+  i: integer;
+  TtarchName: string;
+  ProjectBundle: TTtarchBundleManager;
+begin
+  Result := false;
+  TtarchName := '';
+
+  BundleList := TStringList.Create;
+  try
+    FindFilesInDirByExt(SearchDir, '.ttarch2', BundleList);
+
+    //Find the correct bundle for the episode
+    if ExtractFileName(fTtarchFilename) = 'GameOfThrones_pc_GameOfThrones101_ms.ttarch2' then
+    begin //Two possible files for Episode 1
+      if BundleList.IndexOf('GameOfThrones_pc_DT_Proj_KG_ms.ttarch2') >-1  then
+        TtarchName := 'GameOfThrones_pc_DT_Proj_KG_ms.ttarch2'
+      else
+        TtarchName := 'GameOfThrones_pc_Project_ms.ttarch2'; //Same contents - but this file came with Episode 1. The other only arrived in later episodes so may not be present.
+    end
+    else
+    if ExtractFileName(fTtarchFilename) = 'GameOfThrones_pc_GameOfThrones102_ms.ttarch2' then
+      TtarchName := 'GameOfThrones_pc_DT_Proj_EP2_ms.ttarch2'
+    else
+    if ExtractFileName(fTtarchFilename) = 'GameOfThrones_pc_GameOfThrones103_ms.ttarch2' then
+      TtarchName := 'GameOfThrones_pc_DT_Proj_EP3_ms.ttarch2'
+    else
+    if ExtractFileName(fTtarchFilename) = 'GameOfThrones_pc_GameOfThrones104_ms.ttarch2' then
+      TtarchName := 'GameOfThrones_pc_DT_Proj_EP4_ms.ttarch2'
+    else
+    if ExtractFileName(fTtarchFilename) = 'GameOfThrones_pc_GameOfThrones105_ms.ttarch2' then
+      TtarchName := 'GameOfThrones_pc_DT_Proj_EP5_ms.ttarch2'
+    else
+    if ExtractFileName(fTtarchFilename) = 'GameOfThrones_pc_GameOfThrones106_ms.ttarch2' then
+      TtarchName := 'GameOfThrones_pc_DT_Proj_EP6_ms.ttarch2'
+    else
+    if ExtractFileName(fTtarchFilename) = 'MCSM_pc_Minecraft101_ms.ttarch2' then
+      TtarchName := 'MCSM_pc_Project_ms.ttarch2';
+
+    //Check the desired Bundle actually exists
+    if BundleList.IndexOf(TtarchName) = -1 then
+    begin //Couldnt find the bundle
+      TtarchName := '';
+      Exit;
+    end;
+  finally
+    BundleList.Free;
+  end;
+
+
+  ProjectBundle := nil;
+  try
+    try
+      ProjectBundle:=TTtarchBundleManager.Create(SearchDir + TtarchName);
+      ProjectBundle.ParseFiles;
+
+      //Save all the files inside this Ttarch2 - includes the master.bank and other needed files
+      fMasterBankFiles := TStringList.Create;
+      for I := 0 to ProjectBundle.Count -1 do
+      begin
+        ProjectBundle.SaveFile(i, DestDir, ProjectBundle.FileName[i]);
+        //Add them to the list so we can delete them later
+        fMasterBankFiles.Add(IncludeTrailingPathDelimiter(DestDir) + ProjectBundle.FileName[i]);
+      end;
+
+      if fMasterBankFiles.Count > 0 then
+        result := true;
+
+    except on E: EInvalidFile do
+    begin
+      if ProjectBundle <> nil then
+      begin
+        fMasterBankFiles.Free;
+        fMasterBankFiles := nil;
+      end;
+    end;
+    end;
+
+  finally
+    if ProjectBundle <> nil then
+      ProjectBundle.Free;
+  end;
+end;
+
 function TTelltaleMusicDumper.CopyBundledFiles: integer;
 var
-  i, MusicCount: integer;
+  i, MusicCount, NoFilesPostDump: integer;
   TempStream: TTelltaleMemoryStream;
   DestPath: string;
   DestFile: TFileStream;
+  BankFileList: TStringList;
 begin
   Result:=0;
 
@@ -376,7 +448,8 @@ begin
   begin
     if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.AUD') or
        (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') or    //walking dead 101 has mix of aud + wav
-       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') then  //walking dead has FSB
+       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or  //walking dead has FSB
+       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.BANK') then //multiple tracks stored in bank files
         inc(MusicCount);
   end;
 
@@ -440,6 +513,71 @@ begin
 
       if Assigned(FOnProgress) then FOnProgress(MusicCount, Result);
     end;
+
+
+    //Dump .bank files - extract with FSB Bank Extractor at the end
+    for I := 0 to fBundle.Count - 1 do
+    begin
+      if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.BANK')  then
+      else
+        continue;
+
+      fBundle.SaveFile(i, fDestDir, fBundle.FileName[i] ); //Save the .bank file to the normal dest dir - we will delete it later
+    end;
+    //Now check if there's any .bank files been extracted and run the bank extractor
+    BankFileList := TStringList.Create;
+    try
+      FindFilesInDirByExt(fDestDir, '.bank', BankFileList);
+
+      if BankFileList.Count > 0 then
+      try
+        //Extract the FSB Bank Dumper files
+        fFSBBankDumpExe := ExtractResourceFileToDir('FSBBankDumper.exe', fDestDir, 'fsbdumper');
+        fFSBdll1 := ExtractResourceFileToDir('fmodL.dll', fDestDir, 'fmoddll1');
+        fFSBdll2 := ExtractResourceFileToDir('fmodstudioL.dll', fDestDir, 'fmoddll2');
+
+        if fTtarchFilename > '' then
+        begin
+          if DumpFSBMasterBankFiles(ExtractFilePath(fTtarchFilename), fDestDir) = false then
+          begin
+            raise EMusicDumpError.Create( strMasterBankDumpFail );
+            exit;
+          end;
+        end;
+
+        //Remove trailing backslash from dest dir because my bank dumper program is written in MS C++ which follows the bizarre rules for the shell and treats \ as an escape character
+        ShellExecAndWait(fFSBBankDumpExe, '"' + ExcludeTrailingBackslash(fDestDir) + '"','', SW_SHOW, fDestDir);
+      finally
+        //Delete the files we extracted
+        Sleep(500);
+        for I := 0 to BankFileList.Count -1 do
+          Sysutils.DeleteFile(IncludeTrailingPathDelimiter(fDestDir) + BankFileList[i]);
+
+        RemoveReadOnlyFileAttribute(fFSBBankDumpExe); //Occasionally possible to become read only on some systems if the file thats copied like the exe is already read only
+        Sysutils.DeleteFile(fFSBBankDumpExe);
+        RemoveReadOnlyFileAttribute(fFSBdll1);
+        Sysutils.DeleteFile(fFSBdll1);
+        RemoveReadOnlyFileAttribute(fFSBdll2);
+        Sysutils.DeleteFile(fFSBdll2);
+
+        //Delete the master bank files we dumped from the ttarch earlier
+        for i := 0 to fMasterBankFiles.Count -1 do
+        begin
+          if FileExists(fMasterBankFiles[i]) then
+          Sysutils.DeleteFile(fMasterBankFiles[i]);
+        end;
+
+        //Work out how many new files have been dumped
+        NoFilesPostDump := CountFilesInFolder(fDestDir);
+        if NoFilesPostDump > result then
+          inc(Result, NoFilesPostDump - result);
+      end;
+    finally
+      BankFileList.free;
+      if fMasterBankFiles <> nil then
+        fMasterBankFiles.free;
+    end;
+
 
   finally
     TempStream.Free;
