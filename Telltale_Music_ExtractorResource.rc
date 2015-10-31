@@ -1,3 +1,4 @@
 fmoddll1 RCData "FSB Bank Dumper\\fmodL.dll"
-fmoddll2 RCData "FSB Bank Dumper\\fmodstudioL.dll"
 fsbdumper RCData "FSB Bank Dumper\\FSBBankDumper.exe"
+sox RCData "FSB Bank Dumper\\sox.exe"
+trimsilencebat RCData "FSB Bank Dumper\\TrimSilence.bat"

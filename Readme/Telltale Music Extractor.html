@@ -21,21 +21,22 @@
 	<span class="style7">
 		<span class="style10">Telltale Music Extractor <br>
 			By Bennyboy<br>
-			Version 1.5.1.4<br>
+			Version 1.5.1.5<br>
 			<a href="http://quickandeasysoftware.net">http://quickandeasysoftware.net</a></span><br><br>
 		</span>
 
-	<p class="style7"><strong><em>New in this version (1.5.1.4):</em></strong></p>
+	<p class="style7"><strong><em>New in this version (1.5.1.5):</em></strong></p>
 	<ul>
-		<li class="style7">Added support for dumping the music from .bank files. This means that all music can now be dumped from Game of Thrones and newer games. Be warned though - it takes a long time and a lot of space (around 4GB) as the music is dumped as raw .wav files.<br> This took a lot of work - I had to switch languages to C++ and write a custom .bank dumper  so I hope its useful.</li><br>
-		<li class="style7">Added support for Game of Thrones Episodes 2-5 and Tales From The Borderlands Episodes 2-5.</li><br>
-		<li class="style7">Added support for Minecraft: Story Mode Episode 1. Added skeleton support for the remaining episodes.</li><br>	
-		<li class="style7">If you have multiple Steam libraries then the program now searches all of these when autodetecting game locations.</li><br>		
+		<li class="style7">Fixed music dumping from .bank files - thats the music used in Game of Thrones and Minecraft Story Mode. Its now much quicker, takes less space and is better quality. Many thanks to David Johnson and MrPowerGamerBR for their help in testing the previous wonky version and making me realise that I had to find a better solution.</li><br>
+
 	</ul>
 	
-	<p class="style7"><strong><em>New in the previous version (1.5.1.3):</em></strong></p>
+	<p class="style7"><strong><em>New in the previous version (1.5.1.4):</em></strong></p>
 	<ul>
-		<li class="style7">Added support for Game of Thrones Episode 1. Added skeleton support for the remaining episodes - assuming that the file format and naming convention remain the same - new episodes should work without me needing to update the program.</li><br>
+		<li class="style7">Added support for dumping the music from .bank files. This means that all music can now be dumped from Game of Thrones and newer games. Be warned though - it takes a long time and a lot of space (at least 4GB) as the music is dumped as raw .wav files. On looping music tracks there's some slight clipping at the very end which you'll need to trim, I havent found a reliable way to prevent this yet. Getting this work took a lot of effort - I had to switch languages to C++ and write a custom .bank dumper  so I hope its useful.</li><br>
+		<li class="style7">Added support for Game of Thrones Episodes 2-5 and Tales From The Borderlands Episodes 2-5.</li><br>
+		<li class="style7">Added support for Minecraft: Story Mode Episodes 1 and 2. Added skeleton support for the remaining episodes.</li><br>	
+		<li class="style7">If you have multiple Steam libraries then the program now searches all of these when autodetecting game locations.</li><br>	
 	</ul>
 
 	<p class="style7"><strong><em>What is Telltale Music Extractor?:</em></strong><br>
@@ -77,6 +78,10 @@
 		<li>Minecraft: Story mode</li>
 		<ul>
 		<li>The Order of the Stone</li>
+		<li>Assembly Required</li>
+		<li>The Last Place You Look (not yet released but should work)</li>
+		<li>A Block and a Hard Place (not yet released but should work)</li>
+		<li>Order Up! (not yet released but should work)</li>
 		</ul>		
 		<li>Nelson Tethers - Puzzle Agent</li>
 		<ul>
@@ -239,10 +244,10 @@
 		
 	</p>	
 	
-	<p class="style7"><em><strong>Limitations:</strong></em><br> 
-		Until very recently each episode of a game stored its resources in separate folders. However some newer games store the resources for all episodes in the same folder. So far The Wolf Among Us, Tales From The Borderlands and The Walking Dead Season 2 do this. If you manually choose the game folder by clicking 'open folder' then the program cant know which episode you want. To fix - either choose the specific episode from the menu or choose 'open file' and select the individual file that you want to extract music from..<br><br>
+	<p class="style7"><em><strong>Limitations and bugs:</strong></em><br> 
+		Until very recently each episode of a game stored its resources in separate folders. However some newer games store the resources for all episodes in the same folder. So far The Wolf Among Us, Tales From The Borderlands and The Walking Dead Season 2 do this. If you manually choose the game folder by clicking 'open folder' then the program cant know which episode you want. To fix - either choose the specific episode from the menu or choose 'open file' and select the individual file that you want to extract the music from.<br><br>
 		The tool only rips music. If you want to rip speech then download Telltale Speech Extractor from my <a href="http://quickandeasysoftware.net">website.</a><br><br>
-		Soundtrack files - at the moment only OGG files are supported for the soundtracks feature, although support for MP3 and WAV files could be added if requested.
+		Soundtrack files - at the moment only OGG files are supported for the soundtracks feature, although support for MP3 and WAV files could be added if requested.<br><br>
 	</p>
 	
 	<p class="style7"><em><strong>Source:</strong></em><br> 
@@ -265,6 +270,6 @@
 	</p>
 	
 	<br>
-	<p class="style7 style12">Bennyboy 20/10/15</p>
+	<p class="style7 style12">Bennyboy 31/10/15</p>
 </body>
 </html>

@@ -6,15 +6,13 @@ Http://quickandeasysoftware.net
 
 /*******************************************************
 THIS CODE IS HACKY AND PROBABLY VERY WONKY
-My knowledge of C++ is very poor so there will be errors.
+My knowledge of C++ is poor so there may be errors.
 Please send me corrections and fixes.
 
-Some sounds require callbacks in the original program - to load the data - these wont work as they are for the game to load an external sound and have fmod play them back. Probably just voices. eg:
-[WRN] ShadowEventInstance::createProgrammerSound : Programmer sound callback is not set for instrument '{82cc3934-350c-4c29-8160-642000c30dbf}'.
-[WRN] EventInstance::createProgrammerSoundImpl : Programmer sound callback for instrument '{82cc3934-350c-4c29-8160-642000c30dbf}' returned no sound.
+Looks in current dir for .FSB files and dumps each sound in them as a wav
 *******************************************************/
 
-#include "fmod_studio.hpp"
+//#include "fmod_studio.hpp"
 #include "fmod.hpp"
 #include "fmod_errors.h"
 #include "common.h"
@@ -23,12 +21,13 @@ Some sounds require callbacks in the original program - to load the data - these
 #include <string>
 #include <iostream>
 #include <shlwapi.h>
+#include <direct.h>
 using namespace std;
 
 
 
-//Find all .bank files in a given directory and store them in a vector
-void GetBankFilesInDirectory(std::vector<std::string> &out, const std::string &directory)
+//Find all .fsb files in a given directory and store them in a vector
+void GetFSBFilesInDirectory(std::vector<std::string> &out, const std::string &directory)
 {
 	HANDLE dir;
 	WIN32_FIND_DATA file_data;
@@ -47,7 +46,7 @@ void GetBankFilesInDirectory(std::vector<std::string> &out, const std::string &d
 		if (is_directory)
 			continue;
 
-		if (strstr(file_data.cFileName, ".bank"))
+		if (strstr(file_data.cFileName, ".fsb"))
 			out.push_back(full_file_name);
 	} while (FindNextFile(dir, &file_data));
 
@@ -61,105 +60,100 @@ string ExePath() {
 	return string(buffer).substr(0, pos);
 }
 
-bool outputEventByID(FMOD::Studio::System* system, const char* ID)
+
+bool saveSubsoundToFile(FMOD::System* system, const char* FSBName, std::string SoundName, int SubSoundIndex)
 {
-	FMOD_RESULT result;
+	FMOD_RESULT       result;
+	FMOD::Sound      *sound, *subsound;
+	FMOD::Channel    *channel = 0;
+	bool			playing = 0;
 
-	FMOD::Studio::ID eventID = { 0 };
-	ERRCHECK(system->lookupID(ID, &eventID));  //Lookup the ID string from the banks
+	result = FMOD::System_Create(&system);
+	ERRCHECK(result);
 
-	//Use the ID to get the event
-	FMOD::Studio::EventDescription* eventDescription = NULL;
-	ERRCHECK(system->getEventByID(&eventID, &eventDescription));
 
-	// Create an instance of the event
-	FMOD::Studio::EventInstance* eventInstance = NULL;
-	ERRCHECK(eventDescription->createInstance(&eventInstance));
+	auto begin = SoundName.find_first_of(" {");
+	auto end = SoundName.find_last_of("}") +1 ;
+	if (std::string::npos != begin && std::string::npos != end && begin <= end)
+		SoundName.erase(begin, end - begin);
+	else
+	{
+		cout << "Couldnt remove {} chars from string! " << SoundName << endl << endl;
+		Common_Fatal("%s: Error Couldnt remove {} chars from string! %s", SoundName);
+	}
+
+
+
+	//Make the output file
+	std::string filename(SoundName);
+	int li = filename.find_last_of(".");
+	std::string wavfile = filename.substr(0, li) + ".wav";
+	char *outfile = new char[wavfile.length() + 1];
+	std::strcpy(outfile, wavfile.c_str());
+
+	result = system->setOutput(FMOD_OUTPUTTYPE_WAVWRITER_NRT);
+	ERRCHECK(result);
+
+	result = system->init(32, FMOD_INIT_STREAM_FROM_UPDATE, outfile);
+	ERRCHECK(result);
+
+	result = system->createSound(FSBName, FMOD_CREATECOMPRESSEDSAMPLE | FMOD_LOOP_OFF | FMOD_2D , 0, &sound);
+	ERRCHECK(result);
+
+	sound->getSubSound(SubSoundIndex, &subsound);
+	ERRCHECK(result);
+
+	//unsigned int SoundLength;
+	//subsound->getLength(&SoundLength, FMOD_TIMEUNIT_MS);
 	
-	//Preload sample data - otherwise some sounds just dont play
-	//eventDescription->loadSampleData(); Done need this -  docs say it starts loading sample as soon as eventinstance created
-	FMOD_STUDIO_LOADING_STATE  loadingState = FMOD_STUDIO_LOADING_STATE_LOADING;
-	system->update();
-	ERRCHECK(eventDescription->getSampleLoadingState(&loadingState));
-	while (loadingState != FMOD_STUDIO_LOADING_STATE_LOADED)
-	{
-		ERRCHECK(eventDescription->getSampleLoadingState(&loadingState));
-		system->update();
-	}
+	//float rate = 1024.0f / 48000.0f;
+	//float totalCalls = (SoundLength / 1000) / rate; // SoundLength in seconds
+	//double totalCalls = SoundLength / 21.33;
+	//int newcalls = (int)ceil(totalCalls);
+	//result = system->playSound(subsound, 0, false, &channel);
+	//for (int i = 0; i <=  newcalls; i++)
+	//{
+	//	system->update();
+	//}
 
+
+	channel->setLoopCount(0);
+	result = system->playSound(subsound, 0, false, &channel);
+	ERRCHECK(result);
 	
-	int length = 0;
-	result = eventDescription->getLength(&length);
-	if (length == 0)
-	{
-		return false; 
-	}
-
-
-	cout << "Dumping " << ID << endl;
-
-	int TimelinePos = 0;
-	int LastPos = -1;
-	bool played = false;
-
-	while (TimelinePos < length)
-	{
-		if (!played)
-		{
-			ERRCHECK(eventInstance->start()); //Start playback
-			played = true;
-		}
-		
-		eventInstance->getTimelinePosition(&TimelinePos);
-		//char buffer[255 + 1];
-		//sprintf(buffer, "Timeline Position is %d\n", TimelinePos);
-		//OutputDebugString(buffer);
-
-		if (LastPos > TimelinePos) //Looping sounds repeat and have wrong getlength value eg mus_loop_tense never reaches timelinepos 
-		{						   //Seems to report a longer length than reality. So if we dont manually stop it, the track loops forever
-			break;
-		}
-		LastPos = TimelinePos;
+	do {
 		system->update();
-		Sleep(1);   //Crucial! Slows it down enough so that sounds start and end at correct time
-					//Big hack but still cant fix it. Tried with callbacks and other methods - this
-					//Is the only way that 'reliably' works
-	}
 
-	eventInstance->stop(FMOD_STUDIO_STOP_IMMEDIATE); //FMOD_STUDIO_STOP_ALLOWFADEOUT 
-	FMOD_STUDIO_PLAYBACK_STATE playbackState = FMOD_STUDIO_PLAYBACK_STOPPING;
-	while (playbackState != FMOD_STUDIO_PLAYBACK_STOPPED)
-	{
-		eventInstance->getPlaybackState(&playbackState);
-		system->update();
-	}
+		result = channel->isPlaying(&playing);
+		if ((result != FMOD_OK) && (result != FMOD_ERR_INVALID_HANDLE) && (result != FMOD_ERR_CHANNEL_STOLEN)) {
+			ERRCHECK(result);
+		}	
 
-	eventInstance->release(); //necessary?????
-	eventDescription->unloadSampleData();
+	} while (channel && playing);
 
-	system->update();
-	loadingState = FMOD_STUDIO_LOADING_STATE_LOADED;
-	while (loadingState != FMOD_STUDIO_LOADING_STATE_UNLOADED)
-	{
-		if (eventDescription->getSampleLoadingState(&loadingState) == FMOD_OK)
-		{
-			//system->update();
-		}
-		else
-		{
-		}
-	}
+	result = subsound->release();
+	ERRCHECK(result);
+	result = sound->release();
+	ERRCHECK(result);
+	result = system->release();
+	ERRCHECK(result);
 
-	//eventDescription->releaseAllInstances;
 	return true;
 }
 
 
 int FMOD_Main(int argc, char** argv)
 {
+	void             *extradriverdata = 0;
+	FMOD::System     *system;
+	FMOD::Sound      *sound, *subsound;
+	FMOD_RESULT       result;
+	//unsigned int      version;
+	int               numsubsounds;
+
 	cout << "Tellale Music Extractor" << endl;
 	cout << "FMOD Bank Extractor" << endl;
-	cout << "Version 0.1" << endl;
+	cout << "Version 0.2" << endl;
 	cout << "Copyright (c) 2015 Bennyboy" << endl;
 	cout << "Http://quickandeasysoftware.net" << endl << endl;
 
@@ -176,169 +170,86 @@ int FMOD_Main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
+	if (_chdir(argv[1]) < 0) 
+	{
+		cout << "Couldnt switch to output directory " << argv[1] << endl << endl;
+		cout << "Exiting....";
+		exit(EXIT_FAILURE);
+	}
+
 	cout << "Dumping to " << argv[1] << endl << endl;
 	cout << "Dumping will take some time, please be patient." << endl << endl;
 	cout << "Exe path is " << ExePath() << endl;
 
 
+	Common_Init(&extradriverdata);
 
-	void *extraDriverData = 0;
-	Common_Init(&extraDriverData);
+	//result = system->getVersion(&version);
+	//ERRCHECK(result);
 
-	//Studio high level system
-	FMOD::Studio::System* system = NULL;
-	FMOD_RESULT result = FMOD::Studio::System::create(&system);
-	ERRCHECK(result);
+	//if (version < FMOD_VERSION)
+	//{
+	//	Common_Fatal("FMOD lib version %08x doesn't match header version %08x", version, FMOD_VERSION);
+	//}
 
-	//Initialise the system. 
-	result = system->initialize(32, FMOD_STUDIO_INIT_ALLOW_MISSING_PLUGINS, FMOD_INIT_NORMAL, extraDriverData);
-	ERRCHECK(result);
-
-
-	//Load all .bank files from current dir into vector
+	
+	//Load all .fsb files from current dir into vector
 	std::vector<std::string> FilesInDir;
-	GetBankFilesInDirectory(FilesInDir, ExePath()); //"C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio API Windows/api/studio/examples/test/");
-
-
-	//Create vector to hold all the bank instances
-	std::vector<FMOD::Studio::Bank* > vbank_;
+	GetFSBFilesInDirectory(FilesInDir, ExePath()); 
 	int FileArraySize = FilesInDir.size();
 
-	//Set size of the vector to the number of banks and initialise each bank to null 
-	vbank_.resize(FileArraySize);
+	//Loop through each FSB file
 	for (int i = 0; i <= FileArraySize - 1; i++)
 	{
-		vbank_[i] = NULL; //initialise banks
-	}
-
-	//Loop through and load the banks from our bank instances
-	for (int i = 0; i <= FileArraySize - 1; i++)
-	{
-		system->loadBankFile(FilesInDir[i].c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &vbank_[i]);
-		//Bank loading is asynchronous - so make sure its finished loading before we do operations on it. Easier just to wait here after we load each bank.
-		FMOD_STUDIO_LOADING_STATE  bankloadingState = FMOD_STUDIO_LOADING_STATE_LOADING;
-		while (bankloadingState != FMOD_STUDIO_LOADING_STATE_LOADED)
-		{
-			system->update();
-			ERRCHECK(vbank_[i]->getLoadingState(&bankloadingState));
-		}
-	}
-
-	//Create an array to hold all the Event ID's
-	std::vector<std::string> idVector;
-
-	//Get all the event ID's from the banks and store them in idVector
-	for (int i = 0; i <= FileArraySize - 1; i++)
-	{
-		int eventCount = 0;
-		int maxLen = 255;
-		char buffer[255 + 1];
-
-		vbank_[i]->getEventCount(&eventCount); //get the number of events in the bank
-
-		//Create an array to hold the eventdescriptions
-		FMOD::Studio::EventDescription** eventArray = (FMOD::Studio::EventDescription**)malloc(eventCount * sizeof(void*));
-
-		//Fill the array with the events from the bank
-		result = vbank_[i]->getEventList(eventArray, eventCount, &eventCount);
-		if (result == FMOD_OK)
-		{
-			for (int j = 0; j < eventCount; j++)
-			{
-				//Get the ID
-				result = eventArray[j]->getPath(buffer, maxLen, 0);
-				if (result == FMOD_OK)
-				{
-					//OutputDebugString(buffer); OutputDebugString("\n");
-					if (strncmp(buffer, "event", 5) == 0) //only add "event" ID's
-					{
-						idVector.push_back(buffer); //add it as a new element at the end of the vector
-					}
-				}
-				else
-				{
-					OutputDebugString("OI! couldnt get ID!");
-				}
-			}
-		}
-
-		free(eventArray);
-	}
-
-
-	//Free the system so we can create a new one and control the output filename
-	result = system->release();
-	ERRCHECK(result);
-
-
-	//Loop through each ID
-	for (int i = 0; i <= idVector.size() - 1; i++)
-	{
-
-		//Studio high level system
-		FMOD::Studio::System* system = NULL;
-		FMOD_RESULT result = FMOD::Studio::System::create(&system);
+		result = FMOD::System_Create(&system);
 		ERRCHECK(result);
 
-		//Low level system
-		FMOD::System* lowLevel;
-		system->getLowLevelSystem(&lowLevel);
-
-		//Set output to wav file. NRT means we control the playback speed with update()
-		lowLevel->setOutput(FMOD_OUTPUTTYPE_WAVWRITER_NRT);
-
-
-		//Extract filename
-		std::string tempString = idVector[i];//.c_str();
-		std::string filename;
-		unsigned found = tempString.find_last_of("/\\");
-		filename = tempString.substr(found + 1);
-		filename.append(".wav");
-
-
-
-		//Initialise the system. 
-		//Need STREAM_FROM_UPDATE as we're using WAVWRITER_NRT. Need the synchronous here?? Need thread unsafe for low level? - dunno | FMOD_INIT_THREAD_UNSAFE
-		result = system->initialize(32, FMOD_STUDIO_INIT_SYNCHRONOUS_UPDATE, FMOD_INIT_STREAM_FROM_UPDATE , (char*)filename.c_str());
+		//Open the FSB - find how many sounds are in it
+		result = system->init(32, FMOD_INIT_NORMAL, extradriverdata);
 		ERRCHECK(result);
 
+		//Create the sound object for the FSB
+		result = system->createSound(FilesInDir[i].c_str(), FMOD_CREATECOMPRESSEDSAMPLE, 0, &sound);
+		ERRCHECK(result);
 
-		//Loop through and load the banks from our bank instances (banks already stored in array earlier)
-		for (int j = 0; j <= FileArraySize - 1; j++)
+		//Find how many subsounds are in the FSB (the actual music tracks)
+		result = sound->getNumSubSounds(&numsubsounds);
+		ERRCHECK(result);
+
+		//Loop through all the subsounds and store their names
+		std::vector<std::string> SoundNames;
+		char name[256];
+		for (int j = 0; j <= numsubsounds - 1; j++)
 		{
-			system->loadBankFile(FilesInDir[j].c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &vbank_[j]);
+			sound->getSubSound(j, &subsound);
+			ERRCHECK(result);
 
-			//Bank loading is asynchronous - so make sure its finished loading before we do operations on it. Easier just to wait here after we load each bank.
-			system->update();
-			FMOD_STUDIO_LOADING_STATE  bankloadingState = FMOD_STUDIO_LOADING_STATE_LOADING;
-			ERRCHECK(vbank_[j]->getLoadingState(&bankloadingState));
-			while (bankloadingState == FMOD_STUDIO_LOADING_STATE_LOADING)
-			{
+			subsound->getName(name, 256);
+			SoundNames.push_back(name); //add it as a new element at the end of the vector
+			//cout << SoundNames[j] << endl;
 
-				ERRCHECK(vbank_[j]->getLoadingState(&bankloadingState));
-			}
+			result = subsound->release();
+			ERRCHECK(result);
 		}
 
-
-
-
-		//Playback and save the file
-		bool saveresult;
-		saveresult = outputEventByID(system, idVector[i].c_str());
-
-
-		//Free the system so we can create a new one and control the output filename
+		//Reset the system object so we can open it with FMOD_OUTPUTTYPE_WAVWRITER_NRT next time
+		result = sound->release();
+		ERRCHECK(result);
 		result = system->release();
 		ERRCHECK(result);
-		lowLevel->release();
 
-		//If it didnt dump correctly (some events have 0 length for example) then delete the useless file we created.
-		if (saveresult == false)
+
+		//Loop through each subsound and dump it
+		bool saveresult;
+		for (int j = 0; j <= numsubsounds - 1; j++)
 		{
-			remove(filename.c_str());
+			cout << "Dumping " << SoundNames[j].c_str() << endl;
+			saveresult = saveSubsoundToFile(system, FilesInDir[i].c_str(), SoundNames[j].c_str(), j);
 		}
 	}
 
+	//result = system->release();
+	//ERRCHECK(result);
 
 	Common_Close();
 
