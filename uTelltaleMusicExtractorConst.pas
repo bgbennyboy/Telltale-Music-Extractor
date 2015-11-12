@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2014 Bennyboy
+  Copyright (c) 2006 - 2015 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
@@ -18,7 +18,7 @@ interface
 const
   strGameNotFound:       string = 'Couldnt find the game.' + #13 + #13 + 'Try clicking ''Open Folder'' and browse for the game manually.';
   strProgName:           string = 'Telltale Music Extractor';
-  strProgVersion:        string = '1.5.1.5';
+  strProgVersion:        string = '1.5.1.6';
   strProgURL:            string = 'http://quickandeasysoftware.net';
   strSoundTrackDir:      string = 'Soundtracks';
   strCommentTag:         string = 'Created with Telltale Music Extractor ';

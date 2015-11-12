@@ -132,8 +132,8 @@ begin
   fGame         := Game;
   fSourceFiles  := TStringList.Create;
 
-  fSourceDir := '';
-  fTtarchFileName := TtarchFile;
+  fSourceDir := IncludeTrailingPathDelimiter(ExtractFilePath(TtarchFile));
+  fTtarchFileName := ExtractFileName(TtarchFile);
   fMusicType := mt_TTARCH;
   LoadTtarchBundle;
 end;
@@ -550,7 +550,7 @@ begin
 
         if fTtarchFilename > '' then
         begin
-          if DumpAdditionalBankFilesAsFSB(ExtractFilePath(fTtarchFilename), fDestDir) = false then
+          if DumpAdditionalBankFilesAsFSB(fSourceDir, fDestDir) = false then
           begin
             raise EMusicDumpError.Create( strExtraBankDumpFail );
             exit;
