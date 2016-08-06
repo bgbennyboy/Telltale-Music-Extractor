@@ -95,11 +95,23 @@ const
   GameOfThronesEP4_Bundle = 'GameOfThrones_pc_GameOfThrones104_ms.ttarch2';
   GameOfThronesEP5_Bundle = 'GameOfThrones_pc_GameOfThrones105_ms.ttarch2';
   GameOfThronesEP6_Bundle = 'GameOfThrones_pc_GameOfThrones106_ms.ttarch2';
+  WalkingDeadMichonne_EP1_Bundle = 'WDM_pc_WalkingDeadM101_ms.ttarch2';
+  WalkingDeadMichonne_EP2_Bundle = 'WDM_pc_WalkingDeadM102_ms.ttarch2';
+  WalkingDeadMichonne_EP3_Bundle = 'WDM_pc_WalkingDeadM103_ms.ttarch2';
   MinecraftEP1_Bundle     = 'MCSM_pc_Minecraft101_ms.ttarch2';
   MinecraftEP2_Bundle     = 'MCSM_pc_Minecraft102_ms.ttarch2';
   MinecraftEP3_Bundle     = 'MCSM_pc_Minecraft103_ms.ttarch2';
   MinecraftEP4_Bundle     = 'MCSM_pc_Minecraft104_ms.ttarch2';
   MinecraftEP5_Bundle     = 'MCSM_pc_Minecraft105_ms.ttarch2';
+  MinecraftEP6_Bundle     = 'MCSM_pc_Minecraft106_ms.ttarch2';
+  MinecraftEP7_Bundle     = 'MCSM_pc_Minecraft107_ms.ttarch2';
+  MinecraftEP8_Bundle     = 'MCSM_pc_Minecraft108_ms.ttarch2'; //unreleased
+  BatmanEP1_Bundle        = 'BM_pc_Batman101_ms.ttarch2';
+  BatmanEP2_Bundle        = 'BM_pc_Batman102_ms.ttarch2'; //unreleased
+  BatmanEP3_Bundle        = 'BM_pc_Batman103_ms.ttarch2'; //unreleased
+  BatmanEP4_Bundle        = 'BM_pc_Batman104_ms.ttarch2'; //unreleased
+  BatmanEP5_Bundle        = 'BM_pc_Batman105_ms.ttarch2'; //unreleased
+
 
 
 //Normal constructor  - search a directory for the music and determine the music type
@@ -278,6 +290,19 @@ begin
       Minecraft_TheLastPlaceYouLook:              BundleFileName := MinecraftEP3_Bundle;
       Minecraft_ABlockAndAHardPlace:              BundleFileName := MinecraftEP4_Bundle;
       Minecraft_OrderUp:                          BundleFileName := MinecraftEP5_Bundle;
+      Minecraft_APortalToMystery:                 BundleFileName := MinecraftEP6_Bundle;
+      Minecraft_AccessDenied:                     BundleFileName := MinecraftEP7_Bundle;
+      Minecraft_AJourneysEnd:                     BundleFileName := MinecraftEP8_Bundle; //unreleased
+      Batman_RealmOfShadows:                      BundleFileName := BatmanEP1_Bundle;
+      Batman_ChildrenOfArkham:                    BundleFileName := BatmanEP2_Bundle; //unreleased
+      Batman_NewWorldOrder:                       BundleFileName := BatmanEP3_Bundle; //unreleased
+      Batman_GuardianOfGotham:                    BundleFileName := BatmanEP4_Bundle; //unreleased
+      Batman_CityOfLights:                        BundleFileName := BatmanEP5_Bundle; //unreleased
+      WalkingDead_Michonne_InTooDeep:             BundleFileName := WalkingDeadMichonne_EP1_Bundle;
+      WalkingDead_Michonne_GiveNoShelter:         BundleFileName := WalkingDeadMichonne_EP2_Bundle;
+      WalkingDead_Michonne_WhatWeDeserve:         BundleFileName := WalkingDeadMichonne_EP3_Bundle;
+
+
     end;
 
     for I := 0 to BundleList.Count - 1 do

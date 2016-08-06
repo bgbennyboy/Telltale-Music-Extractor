@@ -74,13 +74,16 @@ bool saveSubsoundToFile(FMOD::System* system, const char* FSBName, std::string S
 
 	auto begin = SoundName.find_first_of(" {");
 	auto end = SoundName.find_last_of("}") +1 ;
+
 	if (std::string::npos != begin && std::string::npos != end && begin <= end)
 		SoundName.erase(begin, end - begin);
+	/*
 	else
 	{
 		cout << "Couldnt remove {} chars from string! " << SoundName << endl << endl;
 		Common_Fatal("%s: Error Couldnt remove {} chars from string! %s", SoundName);
 	}
+	*/
 
 
 
@@ -153,8 +156,8 @@ int FMOD_Main(int argc, char** argv)
 
 	cout << "Tellale Music Extractor" << endl;
 	cout << "FMOD Bank Extractor" << endl;
-	cout << "Version 0.2" << endl;
-	cout << "Copyright (c) 2015 Bennyboy" << endl;
+	cout << "Version 0.3" << endl;
+	cout << "Copyright (c) 2016 Bennyboy" << endl;
 	cout << "Http://quickandeasysoftware.net" << endl << endl;
 
 	if (argc <= 1)
