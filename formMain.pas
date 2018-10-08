@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2014 Bennyboy
+  Copyright (c) 2006 - 2018 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
@@ -22,7 +22,7 @@ uses
   JvBaseDlg, JvBrowseFolder, JCLSysInfo, JCLStrings, JCLFileUtils,
 
   uTelltaleFuncs, uTelltaleMusicExtractorConst, uTelltaleMusicDumper,
-  uSoundTrackManager;
+  uSoundTrackManager, System.ImageList;
 
 type
   TfrmMain = class(TForm)
@@ -126,7 +126,6 @@ type
     btnGo: TButton;
     ImageListLarge: TImageList;
     EditDestPath: TLabeledEdit;
-    lblSupportTelltaleLink: TLinkLabel;
     lblByAuthorLink: TLinkLabel;
     TalesFromTheBorderlands1: TMenuItem;
     Menu_TalesFromBorderlands_Zer0Sum: TMenuItem;
@@ -163,14 +162,41 @@ type
     Menu_WalkingDead_Michonne_InTooDeep: TMenuItem;
     Menu_WalkingDead_Michonne_GiveNoShelter: TMenuItem;
     Menu_WalkingDead_Michonne_WhatWeDeserve: TMenuItem;
+    Season11: TMenuItem;
+    BatmanTheEnemyWithin1: TMenuItem;
+    Menu_Batman_TheEnigma: TMenuItem;
+    Menu_Batman_ThePact: TMenuItem;
+    Menu_Batman_FracturedMask: TMenuItem;
+    Menu_Batman_WhatAilsYou: TMenuItem;
+    Menu_Batman_SameStitch: TMenuItem;
+    SeasonThree1: TMenuItem;
+    Menu_WalkingDead_S3_TiesThatBindPartOne: TMenuItem;
+    Menu_WalkingDead_S3_TiesThatBindPartTwo: TMenuItem;
+    Menu_WalkingDead_S3_AbovetheLaw: TMenuItem;
+    Menu_WalkingDead_S3_ThickerThanWater: TMenuItem;
+    Menu_WalkingDead_S3_FromtheGallows: TMenuItem;
+    GuardiansOfTheGalaxy1: TMenuItem;
+    Menu_Guardians_TangledUpInBlue: TMenuItem;
+    Menu_Guardians_UnderPressure: TMenuItem;
+    Menu_Guardians_MoreThanAFeeling: TMenuItem;
+    Menu_Guardians_WhoNeedsYou: TMenuItem;
+    Menu_Guardians_DontStopBelievin: TMenuItem;
+    Season12: TMenuItem;
+    Season21: TMenuItem;
+    Menu_Minecraft_S2_HeroInResidence: TMenuItem;
+    Menu_Minecraft_S2_GiantConsequences: TMenuItem;
+    Menu_Minecraft_S2_JailhouseBlock: TMenuItem;
+    Menu_Minecraft_S2_BelowTheBedrock: TMenuItem;
+    Menu_Minecraft_S2_AboveAndBeyond: TMenuItem;
+    mniSeasonThree2: TMenuItem;
+    mniMenu_WalkingDead_S4_SufferTheChildren: TMenuItem;
+    Menu_WalkingDead_S4_DoneRunning: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuOpenFolderClick(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnChooseSourceClick(Sender: TObject);
     procedure btnChooseDestClick(Sender: TObject);
-    procedure lblSupportTelltaleLinkLinkClick(Sender: TObject;
-      const Link: string; LinkType: TSysLinkType);
   private
     fChosenGame: TTelltaleGame;
     fMusicDumper: TTelltaleMusicDumper;
@@ -206,16 +232,12 @@ begin
     //XP doesnt support right alignment of link label and breaks bottom border when autosize on
     //Probably better to do this with panels and things but...its only for xp
     lblByAuthorLink.AutoSize := false;
-    lblSupportTelltaleLink.AutoSize := false;
-    lblSupportTelltaleLink.Alignment := taLeftJustify;
-    lblSupportTelltaleLink.Left := 238;
   end;
 
   dlgBrowseforfolder.RootDirectory:=fdDesktopDirectory;
   dlgBrowseforfolder.RootDirectoryPath:=GetDesktopDirectoryFolder;
   EditDestPath.Text:=GetDesktopDirectoryFolder;
   frmMain.Caption:=strProgName + ' ' + strProgVersion;
-  lblSupportTelltaleLink.Caption := strSupportTelltaleLink;
   lblByAuthorLink.Caption := strAuthorLink;
 end;
 
@@ -299,12 +321,6 @@ end;
 procedure TfrmMain.MenuOpenFolderClick(Sender: TObject);
 begin
   OpenFolder;
-end;
-
-procedure TfrmMain.lblSupportTelltaleLinkLinkClick(Sender: TObject;
-  const Link: string; LinkType: TSysLinkType);
-begin
-  ShellExecute(0, 'Open', PChar(Link), '', nil, SW_SHOWNORMAL);
 end;
 
 procedure TfrmMain.OpenFolder;

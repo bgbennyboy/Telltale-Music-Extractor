@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2015 Bennyboy
+  Copyright (c) 2006 - 2018 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
@@ -18,7 +18,7 @@ interface
 const
   strGameNotFound:       string = 'Couldnt find the game.' + #13 + #13 + 'Try clicking ''Open Folder'' and browse for the game manually.';
   strProgName:           string = 'Telltale Music Extractor';
-  strProgVersion:        string = '1.5.2';
+  strProgVersion:        string = '1.5.4';
   strProgURL:            string = 'http://quickandeasysoftware.net';
   strSoundTrackDir:      string = 'Soundtracks';
   strCommentTag:         string = 'Created with Telltale Music Extractor ';
@@ -41,7 +41,6 @@ const
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
   strNoSoundtrackErr: string = 'Error - soundtrack parameter is nil';
   strSoundtrackOnlyOgg: string = 'At the moment only OGG files are supported for soundtracks, and this file is a MP3 or WAV. This is because I am lazy. If you need support for MP3 and WAV files then contact me';
-  strSupportTelltaleLink: string = 'Support Telltale' + #13 + '<a href="http://www.telltalegames.com/store/">Buy their games</a>';
   strAuthorLink:      string = 'By Bennyboy' + #13 + '<a href="http://quickandeasysoftware.net">Quick and Easy Software</a>';
   strOpenDialogTitle: string = 'Choose a folder with .aud .ttarch  or .ttarch2 files';
   strSaveDialogTitle: string =  'Select a destination folder for the music';
@@ -50,10 +49,9 @@ const
   strMissingMenu:     string =  'Menu missing for game! Report this.';
   strExtraBankDumpFail:   string = 'Error dumping extra bank files!';
   strMultipleMusicBundles: string = 'Error - couldn''t automatically find the music bundle.' + #13#13 +
-                                    'It is likely that this folder contains the music for multiple episodes of a game.' + #13#13 +
-                                    'There are two possible solutions to this:' + #13#13 +
+                                    'It is likely that this folder contains the music for multiple episodes of a game. There are two possible solutions to this:' + #13#13 +
                                     'Select an episode from the menu and the program will automatically find the files for that episode. Or...' + #13#13 +
-                                    'Choose "Open file" and select the exact file that you want to extract music from.';
+                                    'Choose "Open file" and select the file that you want to extract music from. If you do this then you will want the file ending in ''ms'' eg MCSM_pc_Minecraft103_ms';
 
 implementation
 

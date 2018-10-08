@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2014 Bennyboy
+  Copyright (c) 2006 - 2018 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
@@ -105,13 +105,34 @@ const
   MinecraftEP5_Bundle     = 'MCSM_pc_Minecraft105_ms.ttarch2';
   MinecraftEP6_Bundle     = 'MCSM_pc_Minecraft106_ms.ttarch2';
   MinecraftEP7_Bundle     = 'MCSM_pc_Minecraft107_ms.ttarch2';
-  MinecraftEP8_Bundle     = 'MCSM_pc_Minecraft108_ms.ttarch2'; //unreleased
+  MinecraftEP8_Bundle     = 'MCSM_pc_Minecraft108_ms.ttarch2';
   BatmanEP1_Bundle        = 'BM_pc_Batman101_ms.ttarch2';
-  BatmanEP2_Bundle        = 'BM_pc_Batman102_ms.ttarch2'; //unreleased
-  BatmanEP3_Bundle        = 'BM_pc_Batman103_ms.ttarch2'; //unreleased
-  BatmanEP4_Bundle        = 'BM_pc_Batman104_ms.ttarch2'; //unreleased
-  BatmanEP5_Bundle        = 'BM_pc_Batman105_ms.ttarch2'; //unreleased
-
+  BatmanEP2_Bundle        = 'BM_pc_Batman102_ms.ttarch2';
+  BatmanEP3_Bundle        = 'BM_pc_Batman103_ms.ttarch2';
+  BatmanEP4_Bundle        = 'BM_pc_Batman104_ms.ttarch2';
+  BatmanEP5_Bundle        = 'BM_pc_Batman105_ms.ttarch2';
+  BatmanS2_EP1_Bundle     = 'BAT2_pc_Batman201_ms.ttarch2';
+  BatmanS2_EP2_Bundle     = 'BAT2_pc_Batman202_ms.ttarch2';
+  BatmanS2_EP3_Bundle     = 'BAT2_pc_Batman203_ms.ttarch2';
+  BatmanS2_EP4_Bundle     = 'BAT2_pc_Batman204_ms.ttarch2';
+  BatmanS2_EP5_Bundle     = 'BAT2_pc_Batman205_ms.ttarch2';
+  WalkingDeadS3_EP1_Bundle = 'WD3_pc_WalkingDead301_ms.ttarch2';
+  WalkingDeadS3_EP2_Bundle = 'WD3_pc_WalkingDead302_ms.ttarch2';
+  WalkingDeadS3_EP3_Bundle = 'WD3_pc_WalkingDead303_ms.ttarch2';
+  WalkingDeadS3_EP4_Bundle = 'WD3_pc_WalkingDead304_ms.ttarch2';
+  WalkingDeadS3_EP5_Bundle = 'WD3_pc_WalkingDead305_ms.ttarch2';
+  Guardians_EP1_Bundle = 'GoG_pc_Guardians101_ms.ttarch2';
+  Guardians_EP2_Bundle = 'GoG_pc_Guardians102_ms.ttarch2';
+  Guardians_EP3_Bundle = 'GoG_pc_Guardians103_ms.ttarch2';
+  Guardians_EP4_Bundle = 'GoG_pc_Guardians104_ms.ttarch2';
+  Guardians_EP5_Bundle = 'GoG_pc_Guardians105_ms.ttarch2';
+  Minecraft_S2_EP1_Bundle = 'MC2_pc_Minecraft201_ms.ttarch2';
+  Minecraft_S2_EP2_Bundle = 'MC2_pc_Minecraft202_ms.ttarch2';
+  Minecraft_S2_EP3_Bundle = 'MC2_pc_Minecraft203_ms.ttarch2';
+  Minecraft_S2_EP4_Bundle = 'MC2_pc_Minecraft204_ms.ttarch2';
+  Minecraft_S2_EP5_Bundle = 'MC2_pc_Minecraft205_ms.ttarch2';
+  WalkingDeadS4_EP1_Bundle = 'WD4_pc_WalkingDead401_ms.ttarch2';
+  WalkingDeadS4_EP2_Bundle = 'WD4_pc_WalkingDead402_ms.ttarch2';
 
 
 //Normal constructor  - search a directory for the music and determine the music type
@@ -292,17 +313,37 @@ begin
       Minecraft_OrderUp:                          BundleFileName := MinecraftEP5_Bundle;
       Minecraft_APortalToMystery:                 BundleFileName := MinecraftEP6_Bundle;
       Minecraft_AccessDenied:                     BundleFileName := MinecraftEP7_Bundle;
-      Minecraft_AJourneysEnd:                     BundleFileName := MinecraftEP8_Bundle; //unreleased
+      Minecraft_AJourneysEnd:                     BundleFileName := MinecraftEP8_Bundle;
       Batman_RealmOfShadows:                      BundleFileName := BatmanEP1_Bundle;
-      Batman_ChildrenOfArkham:                    BundleFileName := BatmanEP2_Bundle; //unreleased
-      Batman_NewWorldOrder:                       BundleFileName := BatmanEP3_Bundle; //unreleased
-      Batman_GuardianOfGotham:                    BundleFileName := BatmanEP4_Bundle; //unreleased
-      Batman_CityOfLights:                        BundleFileName := BatmanEP5_Bundle; //unreleased
+      Batman_ChildrenOfArkham:                    BundleFileName := BatmanEP2_Bundle;
+      Batman_NewWorldOrder:                       BundleFileName := BatmanEP3_Bundle;
+      Batman_GuardianOfGotham:                    BundleFileName := BatmanEP4_Bundle;
+      Batman_CityOfLights:                        BundleFileName := BatmanEP5_Bundle;
       WalkingDead_Michonne_InTooDeep:             BundleFileName := WalkingDeadMichonne_EP1_Bundle;
       WalkingDead_Michonne_GiveNoShelter:         BundleFileName := WalkingDeadMichonne_EP2_Bundle;
       WalkingDead_Michonne_WhatWeDeserve:         BundleFileName := WalkingDeadMichonne_EP3_Bundle;
-
-
+      Batman_TheEnigma:                           BundleFileName := BatmanS2_EP1_Bundle;
+      Batman_ThePact:                             BundleFileName := BatmanS2_EP2_Bundle;
+      Batman_FracturedMask:                       BundleFileName := BatmanS2_EP3_Bundle;
+      Batman_WhatAilsYou:                         BundleFileName := BatmanS2_EP4_Bundle;
+      Batman_SameStitch:                          BundleFileName := BatmanS2_EP5_Bundle;
+      WalkingDead_S3_TiesThatBindPartOne:         BundleFileName :=  WalkingDeadS3_EP1_Bundle;
+      WalkingDead_S3_TiesThatBindPartTwo:         BundleFileName :=  WalkingDeadS3_EP2_Bundle;
+      WalkingDead_S3_AbovetheLaw:                 BundleFileName :=  WalkingDeadS3_EP3_Bundle;
+      WalkingDead_S3_ThickerThanWater:            BundleFileName :=  WalkingDeadS3_EP4_Bundle;
+      WalkingDead_S3_FromtheGallows:              BundleFileName :=  WalkingDeadS3_EP5_Bundle;
+      Guardians_TangledUpInBlue:                  BundleFileName := Guardians_EP1_Bundle;
+      Guardians_UnderPressure:                    BundleFileName := Guardians_EP2_Bundle;
+      Guardians_MoreThanAFeeling:                 BundleFileName := Guardians_EP3_Bundle;
+      Guardians_WhoNeedsYou:                      BundleFileName := Guardians_EP4_Bundle;
+      Guardians_DontStopBelievin:                 BundleFileName := Guardians_EP5_Bundle;
+      Minecraft_S2_HeroInResidence:               BundleFileName := Minecraft_S2_EP1_Bundle;
+      Minecraft_S2_GiantConsequences:             BundleFileName := Minecraft_S2_EP2_Bundle;
+      Minecraft_S2_JailhouseBlock:                BundleFileName := Minecraft_S2_EP3_Bundle;
+      Minecraft_S2_BelowTheBedrock:               BundleFileName := Minecraft_S2_EP4_Bundle;
+      Minecraft_S2_AboveAndBeyond:                BundleFileName := Minecraft_S2_EP5_Bundle;
+      WalkingDead_S4_DoneRunning:                 BundleFileName := WalkingDeadS4_EP1_Bundle;
+      WalkingDead_S4_SufferTheChildren:           BundleFileName := WalkingDeadS4_EP2_Bundle;
     end;
 
     for I := 0 to BundleList.Count - 1 do

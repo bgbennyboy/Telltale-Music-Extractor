@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2014 Bennyboy
+  Copyright (c) 2006 - 2018 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
