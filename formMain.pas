@@ -189,8 +189,10 @@ type
     Menu_Minecraft_S2_BelowTheBedrock: TMenuItem;
     Menu_Minecraft_S2_AboveAndBeyond: TMenuItem;
     mniSeasonThree2: TMenuItem;
-    mniMenu_WalkingDead_S4_SufferTheChildren: TMenuItem;
+    Menu_WalkingDead_S4_SufferTheChildren: TMenuItem;
     Menu_WalkingDead_S4_DoneRunning: TMenuItem;
+    Menu_WalkingDead_S4_TakeUsBack: TMenuItem;
+    Menu_WalkingDead_S4_BrokenToys: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuOpenFolderClick(Sender: TObject);

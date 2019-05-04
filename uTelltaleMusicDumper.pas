@@ -133,7 +133,8 @@ const
   Minecraft_S2_EP5_Bundle = 'MC2_pc_Minecraft205_ms.ttarch2';
   WalkingDeadS4_EP1_Bundle = 'WD4_pc_WalkingDead401_ms.ttarch2';
   WalkingDeadS4_EP2_Bundle = 'WD4_pc_WalkingDead402_ms.ttarch2';
-
+  WalkingDeadS4_EP3_Bundle = 'WD4_pc_WalkingDead403_ms.ttarch2';
+  WalkingDeadS4_EP4_Bundle = 'WD4_pc_WalkingDead404_ms.ttarch2';
 
 //Normal constructor  - search a directory for the music and determine the music type
 constructor TTelltaleMusicDumper.Create(SearchDir, DestDir: string; Game: TTelltaleGame);
@@ -344,6 +345,8 @@ begin
       Minecraft_S2_AboveAndBeyond:                BundleFileName := Minecraft_S2_EP5_Bundle;
       WalkingDead_S4_DoneRunning:                 BundleFileName := WalkingDeadS4_EP1_Bundle;
       WalkingDead_S4_SufferTheChildren:           BundleFileName := WalkingDeadS4_EP2_Bundle;
+      WalkingDead_S4_BrokenToys:                  BundleFileName := WalkingDeadS4_EP3_Bundle;
+      WalkingDead_S4_TakeUsBack:                  BundleFileName := WalkingDeadS4_EP4_Bundle;
     end;
 
     for I := 0 to BundleList.Count - 1 do
