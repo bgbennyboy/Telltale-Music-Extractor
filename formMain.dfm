@@ -571,6 +571,45 @@ object frmMain: TfrmMain
           OnClick = OpenPopupMenuHandler
         end
       end
+      object SaveTheWorld1: TMenuItem
+        Caption = 'Save The World'
+        ImageIndex = 3
+        object Menu_SamAndMax_SaveTheWorld_EP1: TMenuItem
+          Caption = '101 Culture Shock'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_SaveTheWorld_EP2: TMenuItem
+          Caption = '102 Situation Comedy'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_SaveTheWorld_EP3: TMenuItem
+          Caption = '103 The Mole, the Mob and the Meatball'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_SaveTheWorld_EP4: TMenuItem
+          Caption = '104 Abe Lincoln Must Die!'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_SaveTheWorld_EP5: TMenuItem
+          Caption = '105 Reality 2.0'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_SaveTheWorld_EP6: TMenuItem
+          Caption = '106 Bright Side Of The Moon'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_SaveTheWorld_Common: TMenuItem
+          Caption = 'Shared music between all episodes'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+      end
     end
     object StrongBadSeason11: TMenuItem
       Caption = 'Strong Bad'
@@ -800,6 +839,179 @@ object frmMain: TfrmMain
           Caption = 'Take Us Back'
           ImageIndex = 12
           OnClick = OpenPopupMenuHandler
+        end
+      end
+      object heDefinitiveSeries1: TMenuItem
+        Caption = 'The Definitive Series'
+        ImageIndex = 12
+        object SeasonOne2: TMenuItem
+          Caption = 'Season One'
+          ImageIndex = 12
+          object Menu_WalkingDead_TheDefinitiveSeries101: TMenuItem
+            Caption = 'Episode 101'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries102: TMenuItem
+            Caption = 'Episode 102'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries105: TMenuItem
+            Caption = 'Episode 105'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries106: TMenuItem
+            Caption = 'Episode 106'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+        end
+        object SeasonTwo2: TMenuItem
+          Caption = 'Season Two'
+          ImageIndex = 12
+          object Menu_WalkingDead_TheDefinitiveSeries201: TMenuItem
+            Caption = 'Episode 201'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries202: TMenuItem
+            Caption = 'Episode 202'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries203: TMenuItem
+            Caption = 'Episode 203'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries204: TMenuItem
+            Caption = 'Episode 204'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries205: TMenuItem
+            Caption = 'Episode 205'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+        end
+        object SeasonThree2: TMenuItem
+          Caption = 'Season Three'
+          ImageIndex = 12
+          object Menu_WalkingDead_TheDefinitiveSeries301: TMenuItem
+            Caption = 'Episode 301'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries302: TMenuItem
+            Caption = 'Episode 302'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries303: TMenuItem
+            Caption = 'Episode 303'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries304: TMenuItem
+            Caption = 'Episode 304'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries305: TMenuItem
+            Caption = 'Episode 305'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+        end
+        object SeasonFour1: TMenuItem
+          Caption = 'Season Four'
+          ImageIndex = 12
+          object Menu_WalkingDead_TheDefinitiveSeries401: TMenuItem
+            Caption = 'Episode 401'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries402: TMenuItem
+            Caption = 'Episode 402'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries403: TMenuItem
+            Caption = 'Episode 403'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeries404: TMenuItem
+            Caption = 'Episode 404'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+        end
+        object Michonne2: TMenuItem
+          Caption = 'Michonne'
+          ImageIndex = 12
+          object Menu_WalkingDead_TheDefinitiveSeriesM101: TMenuItem
+            Caption = 'Michonne 101'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesM102: TMenuItem
+            Caption = 'Michonne 102'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesM103: TMenuItem
+            Caption = 'Michonne 103'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+        end
+        object Extras1: TMenuItem
+          Caption = 'Other'
+          ImageIndex = 12
+          object Menu_WalkingDead_TheDefinitiveSeriesMenu: TMenuItem
+            Caption = 'Menu Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesMenuS2: TMenuItem
+            Caption = 'Menu Season 2 Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesMenuSM: TMenuItem
+            Caption = 'Menu Season Michonne Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesProjectS1: TMenuItem
+            Caption = 'Season 1 Project Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesProjectS2: TMenuItem
+            Caption = 'Season 2 Project Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesProjectS3: TMenuItem
+            Caption = 'Season 3 Project Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesProjectS4: TMenuItem
+            Caption = 'Season 4 Project Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
+          object Menu_WalkingDead_TheDefinitiveSeriesProjectSM: TMenuItem
+            Caption = 'Season Michonne Project Music'
+            ImageIndex = 12
+            OnClick = OpenPopupMenuHandler
+          end
         end
       end
     end

@@ -53,13 +53,13 @@ type
     function CopyUnbundledFiles: integer;
     function CopyBundledFiles: integer;
     function CopyBundledFilesWithSoundtrack(Soundtrack: TSoundtrackManager): integer;
-    function SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
     function ExtractFSB4(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
     function ExtractFSB5(SourceStream: TTelltaleMemoryStream; DestStream: TStream; DestFile: string): boolean;
     function DumpAdditionalBankFilesAsFSB(SearchDir, DestDir: string): boolean;
     function GetTtarchFilesWithAdditionalBanksIn(CurrentTtarchFilename: string; AllBundleFiles: TStringList): TStringList;
     function ExtractFSBFromBankFile(TheBundle: TTtarchBundleManager; FileNo: integer; DestDir, FileName: string): boolean;
     function FindFileHeader(SearchStream: TTelltaleMemoryStream; StartSearchAt, EndSearchAt: Integer; Header: string): integer;
+    function TestIsDataAnFSB5Ogg(SourceStream: TTelltaleMemoryStream): boolean;
   public
     constructor Create(SearchDir, DestDir: String; Game: TTelltaleGame); overload;
     constructor Create(DestDir: String; Game: TTelltaleGame; TtarchFile: string); overload;
@@ -135,6 +135,42 @@ const
   WalkingDeadS4_EP2_Bundle = 'WD4_pc_WalkingDead402_ms.ttarch2';
   WalkingDeadS4_EP3_Bundle = 'WD4_pc_WalkingDead403_ms.ttarch2';
   WalkingDeadS4_EP4_Bundle = 'WD4_pc_WalkingDead404_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_101_Bundle = 'WDC_pc_WalkingDead101_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_102_Bundle = 'WDC_pc_WalkingDead102_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_105_Bundle = 'WDC_pc_WalkingDead105_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_106_Bundle = 'WDC_pc_WalkingDead106_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_201_Bundle = 'WDC_pc_WalkingDead201_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_202_Bundle = 'WDC_pc_WalkingDead202_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_203_Bundle = 'WDC_pc_WalkingDead203_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_204_Bundle = 'WDC_pc_WalkingDead204_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_205_Bundle = 'WDC_pc_WalkingDead205_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_301_Bundle = 'WDC_pc_WalkingDead301_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_302_Bundle = 'WDC_pc_WalkingDead302_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_303_Bundle = 'WDC_pc_WalkingDead303_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_304_Bundle = 'WDC_pc_WalkingDead304_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_305_Bundle = 'WDC_pc_WalkingDead305_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_401_Bundle = 'WDC_pc_WalkingDead401_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_402_Bundle = 'WDC_pc_WalkingDead402_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_403_Bundle = 'WDC_pc_WalkingDead403_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_404_Bundle = 'WDC_pc_WalkingDead404_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_M101_Bundle = 'WDC_pc_WalkingDeadM101_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_M102_Bundle = 'WDC_pc_WalkingDeadM102_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_M103_Bundle = 'WDC_pc_WalkingDeadM103_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_Menu_Bundle = 'WDC_pc_Menu_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_MenuS2_Bundle = 'WDC_pc_MenuSeason2_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_MenuSM_Bundle = 'WDC_pc_MenuSeasonM_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_ProjectS1_Bundle = 'WDC_pc_ProjectSeason1_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_ProjectS2_Bundle = 'WDC_pc_ProjectSeason2_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_ProjectS3_Bundle = 'WDC_pc_ProjectSeason3_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_ProjectS4_Bundle = 'WDC_pc_ProjectSeason4_ms.ttarch2';
+  WalkingDeadDefinitiveEdition_ProjectSM_Bundle = 'WDC_pc_ProjectSeasonM_ms.ttarch2';
+  SamAndMaxSaveTheWorld_EP1_Bundle = 'SM1_pc_SamMax101_uncompressed.ttarch2';
+  SamAndMaxSaveTheWorld_EP2_Bundle = 'SM1_pc_SamMax102_uncompressed.ttarch2';
+  SamAndMaxSaveTheWorld_EP3_Bundle = 'SM1_pc_SamMax103_uncompressed.ttarch2';
+  SamAndMaxSaveTheWorld_EP4_Bundle = 'SM1_pc_SamMax104_uncompressed.ttarch2';
+  SamAndMaxSaveTheWorld_EP5_Bundle = 'SM1_pc_SamMax105_uncompressed.ttarch2';
+  SamAndMaxSaveTheWorld_EP6_Bundle = 'SM1_pc_SamMax106_uncompressed.ttarch2';
+  SamAndMax_SaveTheWorld_Common_Bundle = 'SM1_pc_Common_uncompressed.ttarch2';
 
 //Normal constructor  - search a directory for the music and determine the music type
 constructor TTelltaleMusicDumper.Create(SearchDir, DestDir: string; Game: TTelltaleGame);
@@ -347,6 +383,42 @@ begin
       WalkingDead_S4_SufferTheChildren:           BundleFileName := WalkingDeadS4_EP2_Bundle;
       WalkingDead_S4_BrokenToys:                  BundleFileName := WalkingDeadS4_EP3_Bundle;
       WalkingDead_S4_TakeUsBack:                  BundleFileName := WalkingDeadS4_EP4_Bundle;
+      WalkingDead_TheDefinitiveSeries101:         BundleFileName := WalkingDeadDefinitiveEdition_101_Bundle;
+      WalkingDead_TheDefinitiveSeries102:         BundleFileName := WalkingDeadDefinitiveEdition_102_Bundle;
+      WalkingDead_TheDefinitiveSeries105:         BundleFileName := WalkingDeadDefinitiveEdition_105_Bundle;
+      WalkingDead_TheDefinitiveSeries106:         BundleFileName := WalkingDeadDefinitiveEdition_106_Bundle;
+      WalkingDead_TheDefinitiveSeries201:         BundleFileName := WalkingDeadDefinitiveEdition_201_Bundle;
+      WalkingDead_TheDefinitiveSeries202:         BundleFileName := WalkingDeadDefinitiveEdition_202_Bundle;
+      WalkingDead_TheDefinitiveSeries203:         BundleFileName := WalkingDeadDefinitiveEdition_203_Bundle;
+      WalkingDead_TheDefinitiveSeries204:         BundleFileName := WalkingDeadDefinitiveEdition_204_Bundle;
+      WalkingDead_TheDefinitiveSeries205:         BundleFileName := WalkingDeadDefinitiveEdition_205_Bundle;
+      WalkingDead_TheDefinitiveSeries301:         BundleFileName := WalkingDeadDefinitiveEdition_301_Bundle;
+      WalkingDead_TheDefinitiveSeries302:         BundleFileName := WalkingDeadDefinitiveEdition_302_Bundle;
+      WalkingDead_TheDefinitiveSeries303:         BundleFileName := WalkingDeadDefinitiveEdition_303_Bundle;
+      WalkingDead_TheDefinitiveSeries304:         BundleFileName := WalkingDeadDefinitiveEdition_304_Bundle;
+      WalkingDead_TheDefinitiveSeries305:         BundleFileName := WalkingDeadDefinitiveEdition_305_Bundle;
+      WalkingDead_TheDefinitiveSeries401:         BundleFileName := WalkingDeadDefinitiveEdition_401_Bundle;
+      WalkingDead_TheDefinitiveSeries402:         BundleFileName := WalkingDeadDefinitiveEdition_402_Bundle;
+      WalkingDead_TheDefinitiveSeries403:         BundleFileName := WalkingDeadDefinitiveEdition_403_Bundle;
+      WalkingDead_TheDefinitiveSeries404:         BundleFileName := WalkingDeadDefinitiveEdition_404_Bundle;
+      WalkingDead_TheDefinitiveSeriesM101:        BundleFileName := WalkingDeadDefinitiveEdition_M101_Bundle;
+      WalkingDead_TheDefinitiveSeriesM102:        BundleFileName := WalkingDeadDefinitiveEdition_M102_Bundle;
+      WalkingDead_TheDefinitiveSeriesM103:        BundleFileName := WalkingDeadDefinitiveEdition_M103_Bundle;
+      WalkingDead_TheDefinitiveSeriesMenu:        BundleFileName := WalkingDeadDefinitiveEdition_Menu_Bundle;
+      WalkingDead_TheDefinitiveSeriesMenuS2:      BundleFileName := WalkingDeadDefinitiveEdition_MenuS2_Bundle;
+      WalkingDead_TheDefinitiveSeriesMenuSM:      BundleFileName := WalkingDeadDefinitiveEdition_MenuSM_Bundle;
+      WalkingDead_TheDefinitiveSeriesProjectS1:   BundleFileName := WalkingDeadDefinitiveEdition_ProjectS1_Bundle;
+      WalkingDead_TheDefinitiveSeriesProjectS2:   BundleFileName := WalkingDeadDefinitiveEdition_ProjectS2_Bundle;
+      WalkingDead_TheDefinitiveSeriesProjectS3:   BundleFileName := WalkingDeadDefinitiveEdition_ProjectS3_Bundle;
+      WalkingDead_TheDefinitiveSeriesProjectS4:   BundleFileName := WalkingDeadDefinitiveEdition_ProjectS4_Bundle;
+      WalkingDead_TheDefinitiveSeriesProjectSM:   BundleFileName := WalkingDeadDefinitiveEdition_ProjectSM_Bundle;
+      SamAndMax_SaveTheWorld_EP1:                 BundleFileName := SamAndMaxSaveTheWorld_EP1_Bundle;
+      SamAndMax_SaveTheWorld_EP2:                 BundleFileName := SamAndMaxSaveTheWorld_EP2_Bundle;
+      SamAndMax_SaveTheWorld_EP3:                 BundleFileName := SamAndMaxSaveTheWorld_EP3_Bundle;
+      SamAndMax_SaveTheWorld_EP4:                 BundleFileName := SamAndMaxSaveTheWorld_EP4_Bundle;
+      SamAndMax_SaveTheWorld_EP5:                 BundleFileName := SamAndMaxSaveTheWorld_EP5_Bundle;
+      SamAndMax_SaveTheWorld_EP6:                 BundleFileName := SamAndMaxSaveTheWorld_EP6_Bundle;
+      SamAndMax_SaveTheWorld_Common:              BundleFileName := SamAndMax_SaveTheWorld_Common_Bundle;
     end;
 
     for I := 0 to BundleList.Count - 1 do
@@ -511,11 +583,25 @@ begin
 
 end;
 
+{
+Need a rewrite really. Extracts music files from a ttarch bundle.
+  First looks for .AUD file extension - these are just normal OGG files.
+  Then checks the header of files to see if they are FSB files:
+    If its FSB4 then it dumps it as an MP3.
+    If its FSB5 then it also dumps it as an MP3.
+    However if its FSB5 and the data is stored as OGG in the FSB then we cant
+      decode it ourselves. So we dump the FSB files to the dest dir and use the
+      FSB bank extractor later to convert them to WAVs.
+  If its a .bank file then we extract the FSB files from the bank, extract any
+    additional .bank files needed from other .ttarch bundles
+  Finally we run my FSB bank extractor tool on the dest folder to convert any
+    FSB's we've put in there into WAVs.
+}
 function TTelltaleMusicDumper.CopyBundledFiles: integer;
 var
-  i, MusicCount, NoFilesPostDump: integer;
+  i, MusicCount, NoFilesPostDump, Temp: integer;
   TempStream: TTelltaleMemoryStream;
-  DestPath: string;
+  DestNameAndPath, Header: string;
   DestFile: TFileStream;
   FSBFileList: TStringList;
 begin
@@ -526,8 +612,9 @@ begin
   for i := 0 to fBundle.Count - 1 do
   begin
     if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.AUD') or
+       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.OGG') or
        (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') or    //walking dead 101 has mix of aud + wav
-       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or  //walking dead has FSB
+       (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or    //most newer games use FSB stored as MP3. Sam and Max Remastered uses OGG in FSB5 files
        (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.BANK') then //multiple tracks stored in bank files
         inc(MusicCount);
   end;
@@ -542,8 +629,8 @@ begin
       if Uppercase( ExtractFileExt( fBundle.FileName[i] )) <> '.AUD' then
         continue;
 
-      DestPath := fDestDir + ChangeFileExt(fBundle.FileName[i], '.ogg');
-      DestFile := tfilestream.Create(DestPath, fmOpenWrite or fmCreate);
+      DestNameAndPath := fDestDir + ChangeFileExt(fBundle.FileName[i], '.ogg');
+      DestFile := tfilestream.Create(DestNameAndPath, fmOpenWrite or fmCreate);
       try
         TempStream.Clear;
         fBundle.SaveFileToStream(i, TempStream);
@@ -567,26 +654,76 @@ begin
       if Assigned(FOnProgress) then FOnProgress(MusicCount, Result);
     end;
 
-    //Wolf among us has FSB files with WAV extension so for lazyness  - just do this:
-    //First try and dump FSB's + then assume its WAV if it fails
+    //Wolf among us has FSB files with WAV extension so examine file header rather than relying on file extension
     for I := 0 to fBundle.Count - 1 do
     begin
-      if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') then
+      if (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.FSB') or
+         (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.OGG') or
+         (Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV') then
       else
         continue;
 
       TempStream.Clear;
       fBundle.SaveFileToStream(i, TempStream);
       TempStream.Position := 0;
-      DestPath := fDestDir + ChangeFileExt(fBundle.FileName[i], '.mp3');
-      if SaveFSBToMP3(TempStream, DestPath) = true then
-        inc(Result)
+
+      //All FSBs we will decode to MP3
+      DestNameAndPath := fDestDir + ChangeFileExt(fBundle.FileName[i], '.mp3');
+
+      //Check header and see if its an FSB4 or FSB5. And if its an OGG FSB5
+      Header := TempStream.ReadBlockName;
+      if Header = 'FSB4' then
+      begin
+        DestFile:=tfilestream.Create(DestNameAndPath, fmOpenWrite or fmCreate);
+        try
+          if ExtractFSB4(TempStream, DestFile, DestNameAndPath) then inc(Result);
+        finally
+          DestFile.free;
+        end;
+      end
+      else
+      if Header = 'FSB5' then
+      begin
+        if TestIsDataAnFSB5Ogg(TempStream) then //Dump the file to the dest dir to be converted by the bank extractor later
+        begin
+          {Only dump music files rather than all the speech too.
+          Ideally we'd only dump files starting with 'mus_' but there are some
+          music files that dont follow this format eg cs_ending in Sam and Max
+          Remastered ep6.
+          So we only dump files where the first 3 characters of the filename
+          arent integers. This excludes all the speech. Unfortunately this means
+          we do get the sfx dumped but its better than missing some music}
+          if TryStrToInt( fBundle.FileName[i].Substring(0,3), Temp ) = False then
+          begin
+            TempStream.Position := 0;
+            DestNameAndPath := fDestDir + ChangeFileExt(fBundle.FileName[i], '.fsb'); //needs to be fsb so it can be converted later
+            TempStream.SaveToFile(DestNameAndPath);
+          end;
+        end
+        else
+        begin
+          DestFile:=tfilestream.Create(DestNameAndPath, fmOpenWrite or fmCreate);
+          try
+            if ExtractFSB5(TempStream, DestFile, DestNameAndPath) then inc(Result);
+          finally
+            DestFile.Free;
+          end;
+        end;
+      end
+      else
+      if Header = 'OggS' then //Normal OGG. Found in Walking Dead definitive series menu 'WDC_pc_Menu_ms.ttarch2'
+      begin
+        TempStream.Position := 0;
+        DestNameAndPath := fDestDir + ChangeFileExt(fBundle.FileName[i], '.ogg');
+        TempStream.SaveToFile(DestNameAndPath);
+        inc(Result);
+      end
       else //Assume its a normal WAV
       if Uppercase( ExtractFileExt( fBundle.FileName[i] )) = '.WAV' then
       begin
         TempStream.Position := 0;
-        DestPath := fDestDir + fBundle.FileName[i];
-        TempStream.SaveToFile(DestPath);
+        DestNameAndPath := fDestDir + fBundle.FileName[i];
+        TempStream.SaveToFile(DestNameAndPath);
         inc(Result);
       end;
 
@@ -604,7 +741,8 @@ begin
       ExtractFSBFromBankFile(fBundle, i, fDestDir, fBundle.FileName[i] );
       //fBundle.SaveFile(i, fDestDir, fBundle.FileName[i] ); //Save the .bank file to the normal dest dir - we will delete it later
     end;
-    //Now check if there's any .bank files been extracted and run the bank extractor
+
+    //Now check if there's any .fsb files been extracted and run the fsb extractor
     FSBFileList := TStringList.Create;
     try
       FindFilesInDirByExt(fDestDir, '.fsb', FSBFileList);
@@ -895,38 +1033,6 @@ begin
   end;
 end;
 
-function TTelltaleMusicDumper.SaveFSBToMP3(SourceStream: TTelltaleMemoryStream; DestFile: string): boolean;
-var
-  Header: string;
-  DestStream: TFileStream;
-begin
-  result := false;
-
-  SourceStream.Position := 0;
-  Header := SourceStream.ReadBlockName;
-  if (Header <> 'FSB4') and (Header <> 'FSB5') then
-    Exit;
-
-  DestStream:=tfilestream.Create(DestFile, fmOpenWrite or fmCreate);
-  try
-    DestStream.Position := 0;
-    SourceStream.Position := 0;
-
-    if Header = 'FSB4' then
-      Result := ExtractFSB4(SourceStream, DestStream, DestFile)
-    else
-    if Header = 'FSB5' then
-      Result := ExtractFSB5(SourceStream, DestStream, DestFile)
-    else
-    begin
-      //Log('No FSB headers found!');
-      exit;
-    end;
-  finally
-    DestStream.Free;
-  end;
-end;
-
 function ShouldDownmixChannels(Channels, Frame: integer): boolean;
 var
 	ChansResult: integer;
@@ -1104,6 +1210,7 @@ var
   TempInt, FileOffset: integer;
   Offset, TheType: cardinal;
   Channels: Word;
+  Flags: LongWord;
 begin
   Result := false;
 
@@ -1128,7 +1235,11 @@ begin
 
   FileOffset := SourceStream.ReadDWord + SourceStream.ReadDWord + 60;
 
-  SourceStream.Seek(40, sofromcurrent); //now at end of file header
+  SourceStream.Seek(4, sofromcurrent); //sample data size
+  Flags := SourceStream.ReadDWord;
+
+  SourceStream.Seek(32, sofromcurrent); //now at end of file header
+  //SourceStream.Seek(40, sofromcurrent); //now at end of file header
 
   Offset := SourceStream.ReadDWord;
   SourceStream.Seek(4, sofromcurrent); //samples
@@ -1139,11 +1250,44 @@ begin
 
   SourceStream.Seek(FileOffset, soFromBeginning); //Now at start of data???
 
-  //Assume its mp3 - so far everything is
-  SaveFixedMP3Stream(SourceStream, DestStream, SourceStream.Size - SourceStream.Position, Channels);
+  if Flags = 15 then //Its OGG - this handled separately - dump it and use FSB bank dumper
+  begin
+    Result := False;//DecodeFSBOggToStream(SourceStream, DestStream);
+  end
+  else
+  begin //Assume its mp3 - so far everything is - but really should check for Flags = 11
+    SaveFixedMP3Stream(SourceStream, DestStream, SourceStream.Size - SourceStream.Position, Channels);
+    Result := true;
+  end;
 
-  Result := true;
 end;
+
+function TTelltaleMusicDumper.TestIsDataAnFSB5Ogg(SourceStream: TTelltaleMemoryStream): boolean;
+var
+  TempInt: integer;
+begin
+  Result := false;
+  SourceStream.Position := 0;
+
+  if SourceStream.ReadBlockName <> 'FSB5' then
+    exit;
+
+  SourceStream.Seek(4, soFromCurrent);
+  TempInt := SourceStream.ReadDWord;
+  if TempInt <> 1 then //Number of samples
+  begin
+    raise EMusicDumpError.Create( strMoreThanOneFSB + inttostr(TempInt));  //All games so far have a separate fsb for each sound with 1 sample in the file
+    Exit;
+  end;
+
+  SourceStream.Seek(12, soFromCurrent);
+  if SourceStream.ReadDWord = 15 then //Read flags. Its OGG
+    Result := true;
+
+  SourceStream.Position := 0;
+end;
+
+
 
 procedure TTelltaleMusicDumper.TagMusic(FileName, Title, Album, Artist, Genre, TrackNo, Year, Coverart: string);
 var
