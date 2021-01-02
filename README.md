@@ -41,11 +41,11 @@ All games released so far by Telltale and Skunkape Games. Thats:
 -   Nelson Tethers - Puzzle Agent
 -   Poker Night At The Inventory
 -   Poker Night 2
--   Sam and Max: Season 1:
--   Sam and Max: Season 2:
--   Sam and Max: Season 3:
+-   Sam and Max: Season 1
+-   Sam and Max: Season 2
+-   Sam and Max: Season 3
 -   Sam and Max Save the World
--   Strong Bad: Season 1:
+-   Strong Bad: Season 1
 -   Tales From The Borderlands
 -   Tales Of Monkey Island
 -   The Walking Dead Season One (and 400 Days DLC)
