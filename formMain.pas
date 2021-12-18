@@ -237,6 +237,13 @@ type
     Menu_WalkingDead_TheDefinitiveSeriesProjectS4: TMenuItem;
     Menu_WalkingDead_TheDefinitiveSeriesProjectS3: TMenuItem;
     Menu_WalkingDead_TheDefinitiveSeriesProjectS2: TMenuItem;
+    Season22: TMenuItem;
+    Menu_SamAndMax_BeyondTimeAndSpace_EP5: TMenuItem;
+    Menu_SamAndMax_BeyondTimeAndSpace_EP4: TMenuItem;
+    Menu_SamAndMax_BeyondTimeAndSpace_EP3: TMenuItem;
+    Menu_SamAndMax_BeyondTimeAndSpace_EP2: TMenuItem;
+    Menu_SamAndMax_BeyondTimeAndSpace_EP1: TMenuItem;
+    Menu_SamAndMax_BeyondTimeAndSpace_Common: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuOpenFolderClick(Sender: TObject);

@@ -610,6 +610,40 @@ object frmMain: TfrmMain
           OnClick = OpenPopupMenuHandler
         end
       end
+      object Season22: TMenuItem
+        Caption = 'Beyond Time And Space'
+        ImageIndex = 3
+        object Menu_SamAndMax_BeyondTimeAndSpace_EP1: TMenuItem
+          Caption = '201 Ice Station Santa'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_BeyondTimeAndSpace_EP2: TMenuItem
+          Caption = '202 Moai Better Blues'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_BeyondTimeAndSpace_EP3: TMenuItem
+          Caption = '203 Night Of The Raving Dead'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_BeyondTimeAndSpace_EP4: TMenuItem
+          Caption = '204 Chariots of the Dogs'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_BeyondTimeAndSpace_EP5: TMenuItem
+          Caption = '205 What'#39's New Beelzebub'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_BeyondTimeAndSpace_Common: TMenuItem
+          Caption = 'Shared music between all episodes'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+      end
     end
     object StrongBadSeason11: TMenuItem
       Caption = 'Strong Bad'
