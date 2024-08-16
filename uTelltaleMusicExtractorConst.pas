@@ -18,8 +18,8 @@ interface
 const
   strGameNotFound:       string = 'Couldnt find the game.' + #13 + #13 + 'Try clicking ''Open Folder'' and browse for the game manually.';
   strProgName:           string = 'Telltale Music Extractor';
-  strProgVersion:        string = '1.5.7';
-  strProgURL:            string = 'http://quickandeasysoftware.net';
+  strProgVersion:        string = '1.5.8';
+  strProgURL:            string = 'https://quickandeasysoftware.net';
   strSoundTrackDir:      string = 'Soundtracks';
   strCommentTag:         string = 'Created with Telltale Music Extractor ';
   strDumpSoundTrack:     string = 'Do you want to dump this game as a soundtrack?' + #13#13 + 'See the readme for more information about this.';
@@ -41,7 +41,7 @@ const
   strTtarchError:     string = 'Error while parsing the Ttarch bundle';
   strNoSoundtrackErr: string = 'Error - soundtrack parameter is nil';
   strSoundtrackOnlyOgg: string = 'At the moment only OGG files are supported for soundtracks, and this file is a MP3 or WAV. This is because I am lazy. If you need support for MP3 and WAV files then contact me';
-  strAuthorLink:      string = 'By Bennyboy' + #13 + '<a href="http://quickandeasysoftware.net">Quick and Easy Software</a>';
+  strAuthorLink:      string = 'By Benny' + #13 + '<a href="https://quickandeasysoftware.net">Quick and Easy Software</a>';
   strOpenDialogTitle: string = 'Choose a folder with .aud .ttarch  or .ttarch2 files';
   strSaveDialogTitle: string =  'Select a destination folder for the music';
   strAllDone:         string = 'All done! ';

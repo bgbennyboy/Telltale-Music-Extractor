@@ -1,12 +1,12 @@
 ﻿# Telltale Music Extractor
-Version 1.5.7<br>By Bennyboy<br>[Quick and Easy Software](http://quickandeasysoftware.net/)
+Version 1.5.8<br>By [Quick and Easy Software](http://quickandeasysoftware.net/)
 
-A program that enables you to rip the music from the games developed by Telltale Games. This includes games produced by others using the Telltale engine such as Skunkape Games' Sam & Max Save the World.
+A program that enables you to rip the music from the games developed by Telltale Games. This includes games produced by others using the Telltale engine such as Skunkape Games' Sam & Max remasters.
 
 
 
 ## New in this version
--  Added support for Sam & Max Beyond Time And Space.
+-  Added support for Sam & Max The Devil's Playhouse
   
  ## What do I need to use this?  
 Just the games themselves.
@@ -45,6 +45,7 @@ All games released so far by Telltale and Skunkape Games. Thats:
 -   Sam and Max: Season 3
 -   Sam and Max Save the World
 -   Sam and Max Beyond Time And Space
+-	Sam and Max The Devil's Playhouse
 -   Strong Bad: Season 1
 -   Tales From The Borderlands
 -   Tales Of Monkey Island
@@ -155,4 +156,4 @@ All my software is completely free. If you find this program useful please consi
   
 
 <br><br>
-Last updated 12/12/21
+Last updated 15/08/24

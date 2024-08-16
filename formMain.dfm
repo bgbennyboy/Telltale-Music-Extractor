@@ -7,15 +7,13 @@ object frmMain: TfrmMain
   ClientWidth = 323
   Color = clBtnFace
   ParentFont = True
-  OldCreateOrder = False
   Position = poScreenCenter
   ScreenSnap = True
   OnCreate = FormCreate
   DesignSize = (
     323
     360)
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 15
   object ProgressBar1: TProgressBar
     Left = 0
     Top = 345
@@ -23,6 +21,8 @@ object frmMain: TfrmMain
     Height = 15
     Align = alBottom
     TabOrder = 5
+    ExplicitTop = 344
+    ExplicitWidth = 319
   end
   object EditSourcePath: TLabeledEdit
     Left = 8
@@ -30,11 +30,12 @@ object frmMain: TfrmMain
     Width = 307
     Height = 21
     AutoSize = False
-    EditLabel.Width = 68
-    EditLabel.Height = 13
+    EditLabel.Width = 73
+    EditLabel.Height = 15
     EditLabel.Caption = 'Source folder:'
     ReadOnly = True
     TabOrder = 3
+    Text = ''
   end
   object btnChooseSource: TButton
     Left = 8
@@ -91,22 +92,25 @@ object frmMain: TfrmMain
     Width = 307
     Height = 21
     AutoSize = False
-    EditLabel.Width = 89
-    EditLabel.Height = 13
+    EditLabel.Width = 97
+    EditLabel.Height = 15
     EditLabel.Caption = 'Destination folder:'
     ReadOnly = True
     TabOrder = 4
+    Text = ''
   end
   object lblByAuthorLink: TLinkLabel
     Left = 8
     Top = 307
-    Width = 124
-    Height = 30
+    Width = 133
+    Height = 34
     Anchors = [akTop, akRight]
     Caption = 
-      'By Bennyboy'#13'<a href="http://quickandeasysoftware.net">Quick and ' +
-      'Easy Software</a>'
+      'By Benny'#13'<a href="http://quickandeasysoftware.net">Quick and Eas' +
+      'y Software</a>'
     TabOrder = 6
+    OnLinkClick = lblByAuthorLinkLinkClick
+    ExplicitLeft = 4
   end
   object dlgBrowseForFolder: TJvBrowseForFolderDialog
     RootDirectory = fdDesktopDirectory
@@ -639,6 +643,40 @@ object frmMain: TfrmMain
           OnClick = OpenPopupMenuHandler
         end
         object Menu_SamAndMax_BeyondTimeAndSpace_Common: TMenuItem
+          Caption = 'Shared music between all episodes'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+      end
+      object BeyondTimeAndSpace1: TMenuItem
+        Caption = 'Devil'#39's Playhouse'
+        ImageIndex = 3
+        object Menu_SamAndMax_DevilsPlayhouse_EP1: TMenuItem
+          Caption = '301 The Penal Zone'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_DevilsPlayhouse_EP2: TMenuItem
+          Caption = '302 The Tomb of Sammun-Mak'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_DevilsPlayhouse_EP3: TMenuItem
+          Caption = '303 They Stole Max'#39's Brain!'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_DevilsPlayhouse_EP4: TMenuItem
+          Caption = '304 Beyond the Alley of the Dolls'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_DevilsPlayhouse_EP5: TMenuItem
+          Caption = '305 The City That Dares Not Sleep'
+          ImageIndex = 3
+          OnClick = OpenPopupMenuHandler
+        end
+        object Menu_SamAndMax_DevilsPlayhouse_Common: TMenuItem
           Caption = 'Shared music between all episodes'
           ImageIndex = 3
           OnClick = OpenPopupMenuHandler

@@ -1,7 +1,7 @@
 {
 ******************************************************
   Telltale Music Extractor
-  Copyright (c) 2006 - 2018 Bennyboy
+  Copyright (c) 2006 - 2024 Bennyboy
   Http://quickandeasysoftware.net
 ******************************************************
 }
@@ -22,7 +22,7 @@ uses
   JvBaseDlg, JvBrowseFolder, JCLSysInfo, JCLStrings, JCLFileUtils,
 
   uTelltaleFuncs, uTelltaleMusicExtractorConst, uTelltaleMusicDumper,
-  uSoundTrackManager, System.ImageList;
+  uSoundTrackManager, System.ImageList, Vcl.Mask;
 
 type
   TfrmMain = class(TForm)
@@ -244,12 +244,21 @@ type
     Menu_SamAndMax_BeyondTimeAndSpace_EP2: TMenuItem;
     Menu_SamAndMax_BeyondTimeAndSpace_EP1: TMenuItem;
     Menu_SamAndMax_BeyondTimeAndSpace_Common: TMenuItem;
+    BeyondTimeAndSpace1: TMenuItem;
+    Menu_SamAndMax_DevilsPlayhouse_Common: TMenuItem;
+    Menu_SamAndMax_DevilsPlayhouse_EP5: TMenuItem;
+    Menu_SamAndMax_DevilsPlayhouse_EP4: TMenuItem;
+    Menu_SamAndMax_DevilsPlayhouse_EP3: TMenuItem;
+    Menu_SamAndMax_DevilsPlayhouse_EP2: TMenuItem;
+    Menu_SamAndMax_DevilsPlayhouse_EP1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure OpenPopupMenuHandler(Sender: TObject);
     procedure MenuOpenFolderClick(Sender: TObject);
     procedure btnGoClick(Sender: TObject);
     procedure btnChooseSourceClick(Sender: TObject);
     procedure btnChooseDestClick(Sender: TObject);
+    procedure lblByAuthorLinkLinkClick(Sender: TObject; const Link: string;
+      LinkType: TSysLinkType);
   private
     fChosenGame: TTelltaleGame;
     fMusicDumper: TTelltaleMusicDumper;
@@ -292,6 +301,12 @@ begin
   EditDestPath.Text:=GetDesktopDirectoryFolder;
   frmMain.Caption:=strProgName + ' ' + strProgVersion;
   lblByAuthorLink.Caption := strAuthorLink;
+end;
+
+procedure TfrmMain.lblByAuthorLinkLinkClick(Sender: TObject; const Link: string;
+  LinkType: TSysLinkType);
+begin
+  ShellExecute(0,'open', PChar(Link), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TfrmMain.OnProgress(ProgressMax, ProgressPos: integer);
